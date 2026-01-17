@@ -78,28 +78,34 @@ export function InteractiveDemo({ activeView = 'spec' }) {
             <div className="w-2 h-2 rounded-full bg-red-500"></div>
             <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="ml-2 text-xs text-zinc-500">mod workspace</span>
+            <span className="ml-2 text-xs text-zinc-500">
+              {(currentView === 'agent' || currentView === 'changelog') ? 'claude code' : 'mod workspace'}
+            </span>
           </div>
-          <div className="flex items-center gap-3">
-            <button className="text-zinc-500 hover:text-zinc-300 transition-colors text-xs">
-              Share
-            </button>
-            <button className="text-zinc-500 hover:text-zinc-300 transition-colors">
-              <MessageCircle size={14} />
-            </button>
-          </div>
+          {currentView !== 'agent' && currentView !== 'changelog' && (
+            <div className="flex items-center gap-3">
+              <button className="text-zinc-500 hover:text-zinc-300 transition-colors text-xs">
+                Share
+              </button>
+              <button className="text-zinc-500 hover:text-zinc-300 transition-colors">
+                <MessageCircle size={14} />
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-1 overflow-hidden">
-          {/* File sidebar */}
-          <Sidebar
-            currentView={currentView}
-            activeView={activeView}
-            selectedFile={selectedFile}
-            onSelectWorkspace={closeFile}
-            onSelectFile={openFile}
-            onSelectReview={() => setInternalView('review')}
-          />
+          {/* File sidebar - hidden for agent context and version control views */}
+          {currentView !== 'agent' && currentView !== 'changelog' && (
+            <Sidebar
+              currentView={currentView}
+              activeView={activeView}
+              selectedFile={selectedFile}
+              onSelectWorkspace={closeFile}
+              onSelectFile={openFile}
+              onSelectReview={() => setInternalView('review')}
+            />
+          )}
 
           {/* Main content */}
           <div className="flex-1 overflow-hidden flex flex-col">
@@ -343,10 +349,80 @@ function AgentContextView() {
   const scrollRef = useRef(null)
 
   return (
+    <div className="flex-1 flex flex-col overflow-hidden">
+      {/* Terminal - full width */}
+      <div ref={scrollRef} className="p-4 space-y-2 overflow-y-auto flex-1 demo-scrollbar text-xs">
+        <div className="text-zinc-500">→ ~/workspace</div>
+
+        <div className="text-zinc-400 mt-4">
+          &gt; Build a task management system with persistence
+        </div>
+
+        <div className="space-y-2 mt-3">
+          <div className="text-zinc-400 flex items-start gap-2">
+            <span style={{ color: '#C15F3C' }}>✻</span>
+            <div>I'll implement the task system based on your spec.</div>
+          </div>
+        </div>
+
+        <div className="mt-3 text-zinc-500 ml-4">✓ Read workspace.md</div>
+
+        <div className="mt-4 text-zinc-400">&gt; build workspace.md</div>
+
+        <div className="mt-3 space-y-2">
+          <div className="text-zinc-400 flex items-start gap-2">
+            <Spinner />
+            <div>Implementing task creation...</div>
+          </div>
+          <div className="text-zinc-500 ml-4 space-y-1">
+            <div>→ Writing src/tasks.ts</div>
+            <div>→ Writing src/tasks.test.ts</div>
+            <div>+ Tracing create-task--3b55e97d</div>
+            <div>+ Added reasoning: "Title validation prevents empty tasks"</div>
+          </div>
+        </div>
+
+        <div className="mt-3 space-y-2">
+          <div className="text-zinc-400 flex items-start gap-2">
+            <Spinner />
+            <div>Implementing persistence...</div>
+          </div>
+          <div className="text-zinc-500 ml-4 space-y-1">
+            <div>→ Writing src/storage.ts</div>
+            <div>+ Tracing persist-tasks--a7f3d2c1</div>
+            <div>+ Added reasoning: "localStorage for browser persistence"</div>
+          </div>
+        </div>
+
+        <div className="mt-4 ml-4 space-y-1">
+          <div className="text-blue-400">PreHook: 2 comments, 3 specs, 4 agent changes</div>
+          <div className="text-zinc-500">Read(src/components/Component.tsx)</div>
+          <div className="text-zinc-500">Update(...)</div>
+          <div className="text-blue-400">PostHook: saved change</div>
+        </div>
+      </div>
+
+      <div className="border-t border-zinc-800 p-3 flex-shrink-0">
+        <div className="flex items-center gap-2">
+          <span className="text-zinc-500">→</span>
+          <input
+            type="text"
+            placeholder="Ask Claude..."
+            className="flex-1 bg-transparent text-zinc-400 text-xs outline-none"
+            disabled
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function VersionControlView() {
+  return (
     <div className="flex-1 flex md:flex-row flex-col overflow-hidden">
-      {/* Terminal side */}
+      {/* Terminal - left side */}
       <div className="md:w-1/2 w-full md:border-r border-zinc-800 flex flex-col">
-        <div ref={scrollRef} className="p-4 space-y-2 overflow-y-auto flex-1 demo-scrollbar text-xs">
+        <div className="p-4 space-y-2 overflow-y-auto flex-1 demo-scrollbar text-xs">
           <div className="text-zinc-500">→ ~/workspace</div>
 
           <div className="text-zinc-400 mt-4">
@@ -366,27 +442,32 @@ function AgentContextView() {
 
           <div className="mt-3 space-y-2">
             <div className="text-zinc-400 flex items-start gap-2">
-              <Spinner />
+              <span style={{ color: '#C15F3C' }}>✓</span>
               <div>Implementing task creation...</div>
             </div>
             <div className="text-zinc-500 ml-4 space-y-1">
               <div>→ Writing src/tasks.ts</div>
               <div>→ Writing src/tasks.test.ts</div>
               <div>+ Tracing create-task--3b55e97d</div>
-              <div>+ Added reasoning: "Title validation prevents empty tasks"</div>
             </div>
           </div>
 
           <div className="mt-3 space-y-2">
             <div className="text-zinc-400 flex items-start gap-2">
-              <Spinner />
+              <span style={{ color: '#C15F3C' }}>✓</span>
               <div>Implementing persistence...</div>
             </div>
             <div className="text-zinc-500 ml-4 space-y-1">
               <div>→ Writing src/storage.ts</div>
               <div>+ Tracing persist-tasks--a7f3d2c1</div>
-              <div>+ Added reasoning: "localStorage for browser persistence"</div>
             </div>
+          </div>
+
+          <div className="mt-4 ml-4 space-y-1">
+            <div className="text-blue-400">PreHook: 2 comments, 3 specs, 4 agent changes</div>
+            <div className="text-zinc-500">Read(src/components/Component.tsx)</div>
+            <div className="text-zinc-500">Update(...)</div>
+            <div className="text-blue-400">PostHook: saved change</div>
           </div>
         </div>
 
@@ -403,101 +484,26 @@ function AgentContextView() {
         </div>
       </div>
 
-      {/* Agent reasoning side */}
-      <div className="md:w-1/2 w-full overflow-y-auto p-4 space-y-4 demo-scrollbar md:border-t-0 border-t border-zinc-800">
-        <div className="text-xs text-zinc-500 uppercase tracking-wider">Agent Threads</div>
+      {/* Changelog - right side (terminal log style) */}
+      <div className="md:w-1/2 w-full overflow-y-auto pt-0 pb-4 px-4 demo-scrollbar md:border-t-0 border-t border-zinc-800 font-mono text-xs">
+        <div className="space-y-1">
+          <div className="text-zinc-500">sarah@macbook ~/workspace</div>
+          <div className="text-zinc-400 mt-2">$ mod sync</div>
+          <div className="text-zinc-500 mt-2">syncing feat/task-system...</div>
+          <div className="text-zinc-600 mt-2 mb-2">─────────────────────────────────</div>
 
-        <div className="bg-zinc-900 border border-zinc-700 rounded-lg p-4">
-          <div className="flex items-center gap-2 text-xs mb-3">
-            <span className="text-orange-400">◈</span>
-            <span className="text-zinc-300">Claude</span>
-            <span className="text-zinc-600">·</span>
-            <span className="text-zinc-500">Task Creation</span>
-          </div>
-          <div className="space-y-3 text-xs">
-            <div className="bg-zinc-800 rounded p-3">
-              <div className="text-zinc-500 uppercase tracking-wider mb-2">Reasoning</div>
-              <p className="text-zinc-300">Created task factory with title validation. Using crypto.randomUUID() for unique IDs ensures no collisions.</p>
-            </div>
-            <div className="bg-zinc-800 rounded p-3">
-              <div className="text-zinc-500 uppercase tracking-wider mb-2">Context from Spec</div>
-              <p className="text-zinc-400">REQ-001: Users can create tasks with a title</p>
-              <p className="text-yellow-600 font-mono mt-1">3b55e97d</p>
-            </div>
-          </div>
-        </div>
+          <div className="text-zinc-500">[09:38] <span className="text-blue-400">prompt</span> "Build a task management system..." <span className="text-zinc-600">(@sarah)</span></div>
+          <div className="text-zinc-500">[09:39] <span className="text-blue-400">create</span> workspace.md <span className="text-zinc-600">(claude)</span></div>
+          <div className="text-zinc-500">[09:40] <span className="text-blue-400">edit</span> tasks.ts:1-12 <span className="text-zinc-600">(claude)</span></div>
+          <div className="text-zinc-500">[09:41] <span className="text-blue-400">comment</span> "What if localStorage is full?" <span className="text-zinc-600">(@frances)</span></div>
+          <div className="text-zinc-500">[09:42] <span className="text-blue-400">edit</span> storage.ts:1-15 <span className="text-zinc-600">(claude)</span></div>
+          <div className="text-zinc-500">[09:43] <span className="text-blue-400">comment</span> "The filter buttons look great!" <span className="text-zinc-600">(@ben)</span></div>
+          <div className="text-zinc-500">[09:44] <span className="text-blue-400">edit</span> filter.ts:1-13 <span className="text-zinc-600">(claude)</span></div>
+          <div className="text-zinc-500">[09:45] <span className="text-blue-400">review</span> PR approved by @mike <span className="text-zinc-600">(@sarah)</span></div>
 
-        <div className="bg-zinc-900 border border-zinc-700 rounded-lg p-4">
-          <div className="flex items-center gap-2 text-xs mb-3">
-            <span className="text-orange-400">◈</span>
-            <span className="text-zinc-300">Claude</span>
-            <span className="text-zinc-600">·</span>
-            <span className="text-zinc-500">Persistence</span>
-          </div>
-          <div className="space-y-3 text-xs">
-            <div className="bg-zinc-800 rounded p-3">
-              <div className="text-zinc-500 uppercase tracking-wider mb-2">Reasoning</div>
-              <p className="text-zinc-300">Using localStorage for browser persistence. JSON serialization handles the Task[] array cleanly.</p>
-            </div>
-            <div className="bg-zinc-800 rounded p-3">
-              <div className="text-zinc-500 uppercase tracking-wider mb-2">Context from Spec</div>
-              <p className="text-zinc-400">REQ-002: Tasks must persist across browser sessions</p>
-              <p className="text-yellow-600 font-mono mt-1">a7f3d2c1</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function VersionControlView() {
-  return (
-    <div className="flex-1 overflow-y-auto p-4 demo-scrollbar">
-      <div className="max-w-2xl mx-auto space-y-4">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <div className="text-xs text-zinc-500 uppercase tracking-wider">Changelog</div>
-            <div className="text-zinc-300 text-sm mt-1">feat/task-system</div>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-[5px] h-[5px] rounded-full bg-green-500"></div>
-            <span className="text-xs text-zinc-500">synced</span>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          {[
-            { time: '09:45', badge: 'REVIEW', badgeColor: 'bg-purple-500/20 text-purple-400', text: 'PR approved by @mike', author: '@sarah' },
-            { time: '09:44', badge: 'EDIT', badgeColor: 'bg-blue-500/20 text-blue-400', text: 'filter.ts:1-13', author: 'Claude' },
-            { time: '09:43', badge: 'COMMENT', badgeColor: 'bg-yellow-500/20 text-yellow-400', text: '"The filter buttons look great!"', author: '@ben' },
-            { time: '09:42', badge: 'EDIT', badgeColor: 'bg-blue-500/20 text-blue-400', text: 'storage.ts:1-15', author: 'Claude' },
-            { time: '09:41', badge: 'COMMENT', badgeColor: 'bg-yellow-500/20 text-yellow-400', text: '"What if localStorage is full?"', author: '@frances' },
-            { time: '09:40', badge: 'EDIT', badgeColor: 'bg-blue-500/20 text-blue-400', text: 'tasks.ts:1-12', author: 'Claude' },
-            { time: '09:39', badge: 'CREATE', badgeColor: 'bg-green-500/20 text-green-400', text: 'workspace.md', author: 'Claude' },
-            { time: '09:38', badge: 'PROMPT', badgeColor: 'bg-orange-500/20 text-orange-400', text: '"Build a task management system..."', author: '@sarah' },
-          ].map((entry, i) => (
-            <div key={i} className="flex items-center gap-3 text-xs py-2 border-b border-zinc-800 last:border-0">
-              <span className="text-zinc-600 w-10">{entry.time}</span>
-              <span className={`px-2 py-0.5 rounded text-[10px] font-medium ${entry.badgeColor}`}>
-                {entry.badge}
-              </span>
-              <span className="text-zinc-300 flex-1 truncate">{entry.text}</span>
-              <span className="text-zinc-500">{entry.author}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-6 pt-4 border-t border-zinc-800">
-          <div className="flex items-center gap-3 text-xs text-zinc-500">
-            <div className="flex items-center gap-1.5">
-              <div className="w-[5px] h-[5px] rounded-full bg-green-500 animate-pulse"></div>
-              <span>1 agent active</span>
-            </div>
-            <span>·</span>
-            <span>3 specs synced</span>
-            <span>·</span>
-            <span>4 files changed</span>
+          <div className="text-zinc-600 mt-2">─────────────────────────────────</div>
+          <div className="text-zinc-500 mt-1">
+            <span className="text-green-400">✓</span> synced | 3 specs | 4 files changed
           </div>
         </div>
       </div>
