@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import Hero from '../components/Hero'
 import Discover from '../components/Discover'
 import Usecases from '../components/Usecases'
-import TwoWays from '../components/TwoWays'
 import FinalCTA from '../components/FinalCTA'
 
 function Home() {
@@ -41,7 +40,6 @@ function Home() {
       <Hero />
       <Discover />
       <Usecases />
-      <TwoWays />
       <FinalCTA />
     </>
   )

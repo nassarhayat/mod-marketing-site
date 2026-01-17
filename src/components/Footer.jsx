@@ -2,57 +2,73 @@ import { Link } from 'react-router-dom'
 
 function Footer() {
   return (
-    <footer className="footer">
-      <div className="footer-content">
-        <div className="footer-cta">
-          <h3 className="footer-cta-title">Stay in the loop</h3>
-          <p className="footer-cta-text">Get updates on new features, templates, and best practices for spec-driven development.</p>
-          <div className="footer-subscribe">
-            <input type="email" placeholder="Enter your email" className="footer-input" />
-            <button className="footer-subscribe-btn">Subscribe</button>
+    <footer className="bg-[#050505] border-t border-white/[0.06] relative overflow-hidden">
+      <div className="max-w-[1400px] mx-auto px-8 py-16">
+        <div className="grid md:grid-cols-[1fr_2fr] gap-12 mb-12">
+          {/* Newsletter */}
+          <div>
+            <h3 className="text-xl font-semibold text-white mb-3">Stay in the loop</h3>
+            <p className="text-white/50 text-sm mb-4 leading-relaxed">
+              Get updates on new features, templates, and best practices for spec-driven development.
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-1 bg-white/[0.05] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-white/20 transition-colors"
+              />
+              <button className="bg-white text-black px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-white/90 transition-colors">
+                Subscribe
+              </button>
+            </div>
+          </div>
+
+          {/* Links */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="flex flex-col gap-3">
+              <h4 className="text-xs font-medium text-white/40 uppercase tracking-wider">Product</h4>
+              <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">Features</Link>
+              <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">Templates</Link>
+              <Link to="/pricing" className="text-sm text-white/60 hover:text-white transition-colors">Pricing</Link>
+              <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">Changelog</Link>
+            </div>
+            <div className="flex flex-col gap-3">
+              <h4 className="text-xs font-medium text-white/40 uppercase tracking-wider">Company</h4>
+              <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">About</Link>
+              <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">Blog</Link>
+              <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">Careers</Link>
+              <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">Contact</Link>
+            </div>
+            <div className="flex flex-col gap-3">
+              <h4 className="text-xs font-medium text-white/40 uppercase tracking-wider">Resources</h4>
+              <Link to="/docs" className="text-sm text-white/60 hover:text-white transition-colors">Documentation</Link>
+              <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">Guides</Link>
+              <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">API Reference</Link>
+              <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">Support</Link>
+            </div>
+            <div className="flex flex-col gap-3">
+              <h4 className="text-xs font-medium text-white/40 uppercase tracking-wider">Social</h4>
+              <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">Twitter</Link>
+              <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">GitHub</Link>
+              <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">Discord</Link>
+              <Link to="#" className="text-sm text-white/60 hover:text-white transition-colors">LinkedIn</Link>
+            </div>
           </div>
         </div>
-        <div className="footer-links">
-          <div className="footer-column">
-            <h4 className="footer-column-title">Product</h4>
-            <Link to="#" className="footer-link">Features</Link>
-            <Link to="#" className="footer-link">Templates</Link>
-            <Link to="/pricing" className="footer-link">Pricing</Link>
-            <Link to="#" className="footer-link">Changelog</Link>
-          </div>
-          <div className="footer-column">
-            <h4 className="footer-column-title">Company</h4>
-            <Link to="#" className="footer-link">About</Link>
-            <Link to="#" className="footer-link">Blog</Link>
-            <Link to="#" className="footer-link">Careers</Link>
-            <Link to="#" className="footer-link">Contact</Link>
-          </div>
-          <div className="footer-column">
-            <h4 className="footer-column-title">Resources</h4>
-            <Link to="/docs" className="footer-link">Documentation</Link>
-            <Link to="#" className="footer-link">Guides</Link>
-            <Link to="#" className="footer-link">API Reference</Link>
-            <Link to="#" className="footer-link">Support</Link>
-          </div>
-          <div className="footer-column">
-            <h4 className="footer-column-title">Social</h4>
-            <Link to="#" className="footer-link">Twitter</Link>
-            <Link to="#" className="footer-link">GitHub</Link>
-            <Link to="#" className="footer-link">Discord</Link>
-            <Link to="#" className="footer-link">LinkedIn</Link>
+
+        {/* Bottom */}
+        <div className="flex items-center justify-between pt-8 border-t border-white/[0.06]">
+          <p className="text-sm text-white/30">&copy; 2025 Mod</p>
+          <div className="flex gap-6">
+            <Link to="#" className="text-sm text-white/30 hover:text-white/60 transition-colors">Privacy</Link>
+            <Link to="#" className="text-sm text-white/30 hover:text-white/60 transition-colors">Terms</Link>
           </div>
         </div>
       </div>
-      <div className="footer-bottom">
-        <p className="footer-copyright">&copy; 2025 Mod</p>
-        <div className="footer-legal">
-          <Link to="#" className="footer-legal-link">Privacy</Link>
-          <Link to="#" className="footer-legal-link">Terms</Link>
-        </div>
-      </div>
+
       {/* Animated logo shapes */}
-      <div className="footer-logo-shapes">
-        <svg className="logo-shape shape-red" viewBox="0 0 60 80" fill="none">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-end gap-1 opacity-20">
+        <svg className="w-8 h-10" viewBox="0 0 60 80" fill="none">
           <path d="M55 10C55 4 49 0 44 3L8 22C4 24 2 28 2 32V62C2 68 8 72 14 69L50 50C54 48 56 44 56 40V10Z" fill="url(#redGrad)"/>
           <defs>
             <linearGradient id="redGrad" x1="28" y1="0" x2="28" y2="80" gradientUnits="userSpaceOnUse">
@@ -61,7 +77,7 @@ function Footer() {
             </linearGradient>
           </defs>
         </svg>
-        <svg className="logo-shape shape-white" viewBox="0 0 60 80" fill="none">
+        <svg className="w-8 h-10" viewBox="0 0 60 80" fill="none">
           <path d="M55 10C55 4 49 0 44 3L8 22C4 24 2 28 2 32V62C2 68 8 72 14 69L50 50C54 48 56 44 56 40V10Z" fill="url(#whiteGrad)" stroke="rgba(0,0,0,0.1)" strokeWidth="1"/>
           <defs>
             <linearGradient id="whiteGrad" x1="28" y1="0" x2="28" y2="80" gradientUnits="userSpaceOnUse">
@@ -70,7 +86,7 @@ function Footer() {
             </linearGradient>
           </defs>
         </svg>
-        <svg className="logo-shape shape-blue" viewBox="0 0 60 80" fill="none">
+        <svg className="w-8 h-10" viewBox="0 0 60 80" fill="none">
           <path d="M55 10C55 4 49 0 44 3L8 22C4 24 2 28 2 32V62C2 68 8 72 14 69L50 50C54 48 56 44 56 40V10Z" fill="url(#blueGrad)"/>
           <defs>
             <linearGradient id="blueGrad" x1="28" y1="0" x2="28" y2="80" gradientUnits="userSpaceOnUse">

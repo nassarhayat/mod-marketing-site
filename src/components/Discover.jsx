@@ -1,116 +1,107 @@
 import { Link } from 'react-router-dom'
 
+const templates = [
+  { name: 'Feature Spec', creator: 'Sarah Chen', creatorInitial: 'S', summary: 'Define new product features with clear requirements and acceptance criteria.', sections: ['Overview', 'Requirements', 'User Stories'], saves: 1243, downloads: 892 },
+  { name: 'Design Doc', creator: 'Marcus Johnson', creatorInitial: 'M', summary: 'Document technical architecture decisions and system design trade-offs.', sections: ['Context', 'Architecture', 'Trade-offs'], saves: 987, downloads: 654 },
+  { name: 'RFC', creator: 'Alex Rivera', creatorInitial: 'A', summary: 'Propose changes and gather feedback from stakeholders before implementation.', sections: ['Problem', 'Proposal', 'Alternatives'], saves: 756, downloads: 512 },
+  { name: 'PRD', creator: 'Jordan Lee', creatorInitial: 'J', summary: 'Outline product goals, features, and success metrics for new initiatives.', sections: ['Goals', 'Features', 'Success Metrics'], saves: 1102, downloads: 789 },
+  { name: 'API Spec', creator: 'Taylor Kim', creatorInitial: 'T', summary: 'Specify REST or GraphQL endpoints with authentication and examples.', sections: ['Endpoints', 'Auth', 'Examples'], saves: 634, downloads: 421 },
+  { name: 'Test Plan', creator: 'Casey Morgan', creatorInitial: 'C', summary: 'Plan testing strategy with scope, test cases, and coverage goals.', sections: ['Scope', 'Test Cases', 'Coverage'], saves: 445, downloads: 298 },
+  { name: 'Security Review', creator: 'Robin Patel', creatorInitial: 'R', summary: 'Identify threats, document mitigations, and track security audits.', sections: ['Threats', 'Mitigations', 'Audit'], saves: 523, downloads: 367 },
+  { name: 'Migration Guide', creator: 'Drew Wilson', creatorInitial: 'D', summary: 'Step-by-step migration instructions with rollback procedures.', sections: ['Before', 'Steps', 'Rollback'], saves: 389, downloads: 256 },
+]
+
+const workspaces = [
+  { name: 'stripe/connect', desc: 'Connect platform design docs and API specifications', specs: 21, branches: 4, files: 89, members: ['T', 'R', 'S'] },
+  { name: 'vercel/sdk', desc: 'AI SDK feature specs and integration guides', specs: 15, branches: 3, files: 52, members: ['J', 'M'] },
+  { name: 'openai/agents', desc: 'Agent framework architecture and patterns', specs: 8, branches: 2, files: 34, members: ['A', 'K', 'L'] },
+  { name: 'langchain/core', desc: 'Core library specs and extension points', specs: 18, branches: 5, files: 71, members: ['H', 'P'] },
+  { name: 'nextjs/app-router', desc: 'App Router architecture and migration guides', specs: 9, branches: 2, files: 28, members: ['L', 'D', 'G'] },
+  { name: 'prisma/client', desc: 'Client feature specs and query patterns', specs: 14, branches: 3, files: 45, members: ['N'] },
+  { name: 'react/core', desc: 'React internals documentation and RFCs', specs: 31, branches: 8, files: 124, members: ['D', 'S', 'A', 'M'] },
+  { name: 'tailwind/ui', desc: 'Component library specs and design tokens', specs: 23, branches: 4, files: 67, members: ['A', 'S'] },
+]
+
 function Discover() {
   return (
-    <section className="discover-section" id="discover">
-      <div className="container">
-        <h2 className="discover-title">Discover</h2>
-        <p className="discover-subtitle">Start your next project with a template and see what others are building</p>
+    <section className="bg-[#050505] py-16 px-8 md:px-20" id="discover">
+      <div className="max-w-[1400px] mx-auto">
+        {/* Discover Templates */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-semibold text-white mb-3">Discover Templates</h2>
+          <p className="text-lg text-white/50 mb-8">Start your next spec with a template ready to customize</p>
 
-        <div className="bento-grid">
-          <Link to="#" className="bento-card bento-large">
-            <div className="bento-label">Templates</div>
-            <div className="bento-icon-grid">
-              <div className="bento-mini-icon feature">F</div>
-              <div className="bento-mini-icon design">D</div>
-              <div className="bento-mini-icon rfc">R</div>
-              <div className="bento-mini-icon readme">R</div>
-            </div>
-            <div className="bento-title">Start from a template</div>
-            <div className="bento-desc">Feature specs, design docs, RFCs, and READMEs ready to customize</div>
-          </Link>
-
-          <Link to="#" className="bento-card">
-            <div className="bento-workspace-icon" style={{ background: '#3b82f6' }}>A</div>
-            <div className="bento-title">acme/payments</div>
-            <div className="bento-desc">Payment processing specs</div>
-            <div className="bento-meta">
-              <span>12 specs</span>
-              <div className="bento-avatars">
-                <div className="bento-avatar" style={{ background: '#3b82f6' }}>S</div>
-                <div className="bento-avatar" style={{ background: '#8b5cf6' }}>M</div>
-              </div>
-            </div>
-          </Link>
-
-          <Link to="#" className="bento-card">
-            <div className="bento-workspace-icon" style={{ background: '#22c55e' }}>O</div>
-            <div className="bento-title">openai/agents</div>
-            <div className="bento-desc">Agent framework docs</div>
-            <div className="bento-meta">
-              <span>8 specs</span>
-              <div className="bento-avatars">
-                <div className="bento-avatar" style={{ background: '#22c55e' }}>A</div>
-              </div>
-            </div>
-          </Link>
-
-          <Link to="#" className="bento-card bento-tall">
-            <div className="bento-label">Popular</div>
-            <div className="bento-workspace-icon large" style={{ background: '#6366f1' }}>S</div>
-            <div className="bento-title">stripe/connect</div>
-            <div className="bento-desc">Connect platform design docs with comprehensive API specifications</div>
-            <div className="bento-meta">
-              <span>21 specs</span>
-              <div className="bento-avatars">
-                <div className="bento-avatar" style={{ background: '#6366f1' }}>T</div>
-                <div className="bento-avatar" style={{ background: '#a855f7' }}>R</div>
-              </div>
-            </div>
-          </Link>
-
-          <Link to="#" className="bento-card">
-            <div className="bento-workspace-icon" style={{ background: '#f59e0b' }}>V</div>
-            <div className="bento-title">vercel/sdk</div>
-            <div className="bento-desc">AI SDK feature specs</div>
-            <div className="bento-meta">
-              <span>15 specs</span>
-              <div className="bento-avatars">
-                <div className="bento-avatar" style={{ background: '#f59e0b' }}>J</div>
-              </div>
-            </div>
-          </Link>
-
-          <Link to="#" className="bento-card">
-            <div className="bento-workspace-icon" style={{ background: '#ef4444' }}>L</div>
-            <div className="bento-title">langchain/core</div>
-            <div className="bento-desc">Core library specs</div>
-            <div className="bento-meta">
-              <span>18 specs</span>
-              <div className="bento-avatars">
-                <div className="bento-avatar" style={{ background: '#ef4444' }}>H</div>
-              </div>
-            </div>
-          </Link>
-
-          <Link to="#" className="bento-card bento-wide">
-            <div className="bento-row-layout">
-              <div className="bento-workspace-icon" style={{ background: '#14b8a6' }}>N</div>
-              <div className="bento-info">
-                <div className="bento-title">nextjs/app-router</div>
-                <div className="bento-desc">App Router architecture documentation and migration guides</div>
-              </div>
-              <div className="bento-meta-side">
-                <span>9 specs</span>
-                <div className="bento-avatars">
-                  <div className="bento-avatar" style={{ background: '#14b8a6' }}>L</div>
-                  <div className="bento-avatar" style={{ background: '#22d3ee' }}>D</div>
+          <div className="grid grid-cols-4 gap-5">
+            {templates.map((template, index) => (
+              <Link to="#" className="group flex flex-col no-underline" key={index}>
+                <div className="aspect-[5/3] rounded-xl border border-white/[0.06] bg-white/[0.08] p-4 flex flex-col mb-3 transition-all hover:border-white/[0.15] hover:-translate-y-0.5">
+                  <div className="flex flex-col gap-2 h-full">
+                    <div className="text-base font-medium text-white/90">
+                      {template.sections.join(', ')}
+                    </div>
+                    <div className="text-[13px] text-white/50 leading-relaxed">
+                      {template.summary}
+                    </div>
+                    <div className="flex gap-3 mt-auto pt-4">
+                      <span className="text-xs text-white/30">{template.saves.toLocaleString()} saves</span>
+                      <span className="text-xs text-white/30">{template.downloads.toLocaleString()} downloads</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </Link>
+                <div className="px-1">
+                  <div className="text-sm font-medium text-white/90 mb-1 group-hover:text-white transition-colors">
+                    {template.name}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-[18px] h-[18px] rounded-full bg-white/10 flex items-center justify-center text-[10px] font-semibold text-white/60">
+                      {template.creatorInitial}
+                    </span>
+                    <span className="text-xs text-white/40">{template.creator}</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
 
-          <Link to="#" className="bento-card">
-            <div className="bento-workspace-icon" style={{ background: '#8b5cf6' }}>P</div>
-            <div className="bento-title">prisma/client</div>
-            <div className="bento-desc">Client feature specs</div>
-            <div className="bento-meta">
-              <span>14 specs</span>
-              <div className="bento-avatars">
-                <div className="bento-avatar" style={{ background: '#8b5cf6' }}>N</div>
-              </div>
-            </div>
-          </Link>
+        {/* Discover Workspaces */}
+        <div>
+          <h2 className="text-2xl font-semibold text-white mb-3">Discover Workspaces</h2>
+          <p className="text-lg text-white/50 mb-8">See what others are building and get inspired</p>
+
+          <div className="grid grid-cols-4 gap-5">
+            {workspaces.map((workspace, index) => (
+              <Link to="#" className="group flex flex-col no-underline" key={index}>
+                <div className="aspect-[5/3] rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 flex flex-col transition-all hover:border-white/[0.15] hover:-translate-y-0.5">
+                  <div className="flex flex-col gap-2 h-full">
+                    <div className="flex justify-between items-center">
+                      <div className="text-base font-medium text-white/90">
+                        {workspace.name}
+                      </div>
+                      <div className="flex gap-1">
+                        {workspace.members.map((member, i) => (
+                          <span
+                            key={i}
+                            className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-semibold text-white/60"
+                          >
+                            {member}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="text-[13px] text-white/50 leading-relaxed">
+                      {workspace.desc}
+                    </div>
+                    <div className="flex gap-3 mt-auto pt-4">
+                      <span className="text-xs text-white/30">{workspace.specs} specs</span>
+                      <span className="text-xs text-white/30">{workspace.branches} branches</span>
+                      <span className="text-xs text-white/30">{workspace.files} files</span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -21,23 +21,27 @@ function Usecases() {
   }
 
   return (
-    <section className="discover-section" id="usecases">
-      <div className="container">
-        <h2 className="discover-title">Usecases</h2>
-        <p className="discover-subtitle">Spec, build, and ship from first idea to production</p>
+    <section className="bg-[#050505] py-16 px-8 md:px-20" id="usecases">
+      <div className="max-w-[1400px] mx-auto">
+        <h2 className="text-2xl font-semibold text-white mb-3">Usecases</h2>
+        <p className="text-lg text-white/50 mb-8">Spec, build, and ship from first idea to production</p>
 
         {/* Interactive Demo */}
-        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        <div className="mb-8">
           <InteractiveDemo activeView={activeTab} />
         </div>
 
         {/* Use case tabs */}
-        <div className="usecase-tabs" style={{ maxWidth: '1400px', margin: '1.5rem auto 0' }}>
+        <div className="flex flex-wrap gap-2 mb-4 justify-center">
           {tabs.map(tab => (
             <button
               key={tab.id}
-              className={`usecase-tab ${activeTab === tab.id ? 'active' : ''}`}
               onClick={() => setActiveTab(tab.id)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                activeTab === tab.id
+                  ? 'bg-white text-black'
+                  : 'bg-white/[0.05] text-white/60 hover:bg-white/[0.08] hover:text-white/80'
+              }`}
             >
               {tab.label}
             </button>
@@ -45,8 +49,8 @@ function Usecases() {
         </div>
 
         {/* Tab description */}
-        <div className="usecase-description" style={{ maxWidth: '1400px', margin: '0 auto' }}>
-          <p className="usecase-desc-text">{descriptions[activeTab]}</p>
+        <div className="py-4 text-center max-w-2xl mx-auto">
+          <p className="text-white/50 text-base leading-relaxed">{descriptions[activeTab]}</p>
         </div>
       </div>
     </section>
