@@ -14,24 +14,27 @@ function FinalCTA() {
                 loop
                 muted
                 playsInline
-                className="w-full h-[500px] object-cover"
+                className="w-full object-cover"
               />
             </div>
-            <div className="p-6 flex flex-col justify-center">
-              <h2 className="text-7xl font-semibold text-white/[0.8] mb-3 leading-tight tracking-tight">
+            <div className="p-10 flex flex-col justify-start">
+              <h2 className="text-3xl font-semibold text-white/[0.8] mb-3 leading-tight tracking-tight">
                 Return to the craft
               </h2>
               <p className="text-lg text-white/60 leading-relaxed">
-                Coding agents handle the implementation. Now you can focus on what matters, the intent behind your software and the insights that shape it.
+                Coding agents can handle the implementation now. That should free you to focus on what actually matters: the intent behind your software and the thinking that shapes it.
               </p>
               <p className="text-lg text-white/60 leading-relaxed mt-2">
-                Mod brings teams together to collaborate on specs, context around code, and review to build production grade software.
+                But reviewing diffs in isolation isn't collaboration. Without an interface to iterate with the agent, you lose the shared mental models and compounding context needed to build production-grade software.
+              </p>
+              <p className="text-lg text-white/60 leading-relaxed mt-2">
+                Mod gives you that interface. Specs to align on intent, traces to understand reasoning, reviews to build confidence. Together.
               </p>
             </div>
           </div>
 
           {/* CTA card */}
-          <div className="p-5 flex flex-col justify-center rounded-xl border border-white/[0.06]">
+          <div className="p-10 flex flex-col justify-center rounded-xl border border-white/[0.06] hover:border-white/[0.15] hover:-translate-y-0.5 transition-all">
             <p className="text-5xl font-semibold text-white mb-2 leading-snug">
               Ready to become spec driven?
             </p>
@@ -52,14 +55,14 @@ function FinalCTA() {
                 Read the Docs
               </Link>
             </div>
-            <div className="mt-5 pt-4 border-t border-white/[0.08]">
+            <div className="mt-auto pt-4 border-t border-white/[0.08]">
               <div className="flex gap-1.5 mb-2">
-                <span className="w-6 h-6 rounded-md bg-white/10 flex items-center justify-center text-[10px] font-semibold text-white/50">S</span>
-                <span className="w-6 h-6 rounded-md bg-white/10 flex items-center justify-center text-[10px] font-semibold text-white/50">V</span>
-                <span className="w-6 h-6 rounded-md bg-white/10 flex items-center justify-center text-[10px] font-semibold text-white/50">O</span>
-                <span className="w-6 h-6 rounded-md bg-white/10 flex items-center justify-center text-[10px] font-semibold text-white/50">N</span>
+                <span className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-[10px] font-semibold text-white/50">S</span>
+                <span className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-[10px] font-semibold text-white/50">V</span>
+                <span className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-[10px] font-semibold text-white/50">O</span>
+                <span className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-[10px] font-semibold text-white/50">N</span>
               </div>
-              <p className="text-xs text-white/40">500+ teams collaborating via Mod</p>
+              <p className="text-sm text-white/40">500+ teams collaborating via Mod</p>
             </div>
           </div>
         </div>

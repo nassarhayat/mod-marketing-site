@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import { InteractiveDemo } from './InteractiveDemo'
+import { CLIDemo } from './CLIDemo'
+import { WebDemo } from './WebDemo'
 
 function Usecases() {
   const [activeTab, setActiveTab] = useState('spec')
+  const [demoMode, setDemoMode] = useState('cli')
 
   const tabs = [
     { id: 'spec', label: 'Spec Collaboration' },
@@ -23,12 +25,44 @@ function Usecases() {
   return (
     <section className="bg-[#050505] py-16 px-8 md:px-20" id="usecases">
       <div className="max-w-[1400px] mx-auto">
-        <h2 className="text-2xl font-semibold text-white mb-3">Usecases</h2>
-        <p className="text-lg text-white/50 mb-8">Spec, build, and ship from first idea to production</p>
+        <div className="flex items-start justify-between mb-8">
+          <div>
+            <h2 className="text-2xl font-semibold text-white mb-3">Usecases</h2>
+            <p className="text-lg text-white/50">Spec, build, and ship from first idea to production</p>
+          </div>
+
+          {/* Demo Mode Toggle */}
+          <div className="inline-flex items-center bg-zinc-900 rounded-lg p-1">
+            <button
+              onClick={() => setDemoMode('cli')}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                demoMode === 'cli'
+                  ? 'bg-white text-black'
+                  : 'text-white/60 hover:text-white/80'
+              }`}
+            >
+              CLI
+            </button>
+            <button
+              onClick={() => setDemoMode('web')}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                demoMode === 'web'
+                  ? 'bg-white text-black'
+                  : 'text-white/60 hover:text-white/80'
+              }`}
+            >
+              Web
+            </button>
+          </div>
+        </div>
 
         {/* Interactive Demo */}
         <div className="mb-8">
-          <InteractiveDemo activeView={activeTab} />
+          {demoMode === 'cli' ? (
+            <CLIDemo activeView={activeTab} />
+          ) : (
+            <WebDemo activeView={activeTab} />
+          )}
         </div>
 
         {/* Use case tabs */}

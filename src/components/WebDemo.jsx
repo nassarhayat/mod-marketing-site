@@ -16,7 +16,7 @@ function Spinner() {
   return <span style={{ color: '#C15F3C' }}>{SPINNER_FRAMES[frame]}</span>
 }
 
-export function InteractiveDemo({ activeView = 'spec' }) {
+export function WebDemo({ activeView = 'spec' }) {
   const [expandedSections, setExpandedSections] = useState(
     new Set(['code:create-task-trace-0'])
   )
@@ -424,7 +424,7 @@ function SpecCollaborationView() {
   const [expandedFiles, setExpandedFiles] = useState(new Set(['tasks.ts']))
 
   const specContent = {
-    title: 'Task Management System',
+    title: 'Task Management System - WEb',
     abstract: 'A lightweight task management module for tracking todos with browser persistence and filtering capabilities.',
     problem: 'Users need a simple way to track tasks that persists across sessions without requiring a backend or account creation.',
     approach: 'Implement a client-side task system using localStorage for persistence, with a clean API for CRUD operations and status filtering.',
@@ -1290,4 +1290,4 @@ function BranchReviewView({ onClose }) {
   )
 }
 
-export default InteractiveDemo
+export default WebDemo

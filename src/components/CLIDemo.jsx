@@ -16,7 +16,7 @@ function Spinner() {
   return <span style={{ color: '#C15F3C' }}>{SPINNER_FRAMES[frame]}</span>
 }
 
-export function InteractiveDemo({ activeView = 'spec' }) {
+export function CLIDemo({ activeView = 'spec' }) {
   const [expandedSections, setExpandedSections] = useState(
     new Set(['code:create-task-trace-0'])
   )
@@ -1290,4 +1290,4 @@ function BranchReviewView({ onClose }) {
   )
 }
 
-export default InteractiveDemo
+export default CLIDemo
