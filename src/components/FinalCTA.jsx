@@ -28,7 +28,7 @@ function FinalCTA() {
                 But reviewing diffs in isolation isn't collaboration. Without an interface to iterate with the agent, you lose the shared mental models and compounding context needed to build production-grade software.
               </p>
               <p className="text-base md:text-lg text-white/60 leading-relaxed mt-2">
-                Mod gives you that interface. Specs to align on intent, traces to understand reasoning, reviews to build confidence. Together.
+                Mod gives you that interface. Specs to align on requirements and design, traces to track implementation and tests, reviews to build confidence. Together.
               </p>
             </div>
           </div>
