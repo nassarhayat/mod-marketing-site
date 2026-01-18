@@ -24,27 +24,29 @@ const workspaces = [
 
 function Discover() {
   return (
-    <section className="bg-[#050505] py-16 px-8 md:px-20" id="discover">
+    <section className="bg-[#050505] py-12 md:py-16 px-4 md:px-8 lg:px-20" id="discover">
       <div className="max-w-[1400px] mx-auto">
         {/* Discover Templates */}
-        <div className="mb-16">
-          <h2 className="text-2xl font-semibold text-white mb-3">Discover Templates</h2>
-          <p className="text-lg text-white/50 mb-8">Start your next spec with a template ready to customize</p>
+        <div className="mb-12 md:mb-16">
+          <h2 className="text-xl md:text-2xl font-semibold text-white mb-3">Discover Templates</h2>
+          <p className="text-base md:text-lg text-white/50 mb-6 md:mb-8">Start your next spec with a template ready to customize</p>
 
-          <div className="grid grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
             {templates.map((template, index) => (
-              <Link to="#" className="group flex flex-col no-underline" key={index}>
-                <div className="aspect-[5/3] rounded-xl border border-white/[0.06] bg-white/[0.08] p-4 flex flex-col mb-3 transition-all hover:border-white/[0.15] hover:-translate-y-0.5">
-                  <div className="flex flex-col gap-2 h-full">
-                    <div className="text-base font-medium text-white/90">
-                      {template.sections.join(', ')}
+              <Link to="#" className="group flex flex-col no-underline h-full" key={index}>
+                <div className="flex-1 min-h-[120px] md:min-h-[140px] rounded-xl border border-white/[0.06] bg-white/[0.08] p-3 md:p-4 flex flex-col mb-3 transition-all hover:border-white/[0.15] hover:-translate-y-0.5">
+                  <div className="flex flex-col justify-between h-full">
+                    <div>
+                      <div className="text-sm md:text-base font-medium text-white/90 mb-1">
+		    {template.summary}
+                      </div>
+                      <div className="text-xs md:text-[13px] text-white/50 leading-relaxed line-clamp-3">
+                        {template.sections.map(s => `#${s}`).join(', ')}
+                      </div>
                     </div>
-                    <div className="text-[13px] text-white/50 leading-relaxed">
-                      {template.summary}
-                    </div>
-                    <div className="flex gap-3 mt-auto pt-4">
-                      <span className="text-xs text-white/30">{template.saves.toLocaleString()} saves</span>
-                      <span className="text-xs text-white/30">{template.downloads.toLocaleString()} downloads</span>
+                    <div className="flex gap-2 md:gap-3 pt-2">
+                      <span className="text-[10px] md:text-xs text-white/30">{template.saves.toLocaleString()} saves</span>
+                      <span className="text-[10px] md:text-xs text-white/30">{template.downloads.toLocaleString()} downloads</span>
                     </div>
                   </div>
                 </div>
@@ -66,36 +68,31 @@ function Discover() {
 
         {/* Discover Workspaces */}
         <div>
-          <h2 className="text-2xl font-semibold text-white mb-3">Discover Workspaces</h2>
-          <p className="text-lg text-white/50 mb-8">See what others are building and get inspired</p>
+          <h2 className="text-xl md:text-2xl font-semibold text-white mb-3">Discover Workspaces</h2>
+          <p className="text-base md:text-lg text-white/50 mb-6 md:mb-8">See what others are building and get inspired</p>
 
-          <div className="grid grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
             {workspaces.map((workspace, index) => (
-              <Link to="#" className="group flex flex-col no-underline" key={index}>
-                <div className="aspect-[5/3] rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 flex flex-col transition-all hover:border-white/[0.15] hover:-translate-y-0.5">
-                  <div className="flex flex-col gap-2 h-full">
-                    <div className="flex justify-between items-center">
-                      <div className="text-base font-medium text-white/90">
-                        {workspace.name}
+              <Link to="#" className="group flex flex-col no-underline h-full" key={index}>
+                <div className="flex-1 min-h-[120px] md:min-h-[140px] rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 md:p-4 flex flex-col transition-all hover:border-white/[0.15] hover:-translate-y-0.5">
+                  <div className="flex flex-col justify-between h-full">
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <div className="text-sm md:text-base font-medium text-white/90">
+                          {workspace.name}
+                        </div>
+                        <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-semibold text-white/60">
+                          {workspace.members.length}
+                        </span>
                       </div>
-                      <div className="flex gap-1">
-                        {workspace.members.map((member, i) => (
-                          <span
-                            key={i}
-                            className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-semibold text-white/60"
-                          >
-                            {member}
-                          </span>
-                        ))}
+                      <div className="text-xs md:text-[13px] text-white/50 leading-relaxed line-clamp-2">
+                        {workspace.desc}
                       </div>
                     </div>
-                    <div className="text-[13px] text-white/50 leading-relaxed">
-                      {workspace.desc}
-                    </div>
-                    <div className="flex gap-3 mt-auto pt-4">
-                      <span className="text-xs text-white/30">{workspace.specs} specs</span>
-                      <span className="text-xs text-white/30">{workspace.branches} branches</span>
-                      <span className="text-xs text-white/30">{workspace.files} files</span>
+                    <div className="flex flex-wrap gap-x-2 md:gap-x-3 gap-y-1 pt-2">
+                      <span className="text-[10px] md:text-xs text-white/30">{workspace.specs} specs</span>
+                      <span className="text-[10px] md:text-xs text-white/30">{workspace.branches} branches</span>
+                      <span className="text-[10px] md:text-xs text-white/30">{workspace.files} files</span>
                     </div>
                   </div>
                 </div>

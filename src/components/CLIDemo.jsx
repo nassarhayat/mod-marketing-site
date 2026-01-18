@@ -90,7 +90,7 @@ export function CLIDemo({ activeView = 'spec' }) {
 
   return (
     <div className="w-full min-w-0">
-      <div className="bg-zinc-950 rounded-lg border border-zinc-800 overflow-hidden font-mono text-sm h-[600px] flex flex-col">
+      <div className="bg-zinc-950 rounded-lg border border-zinc-800 overflow-hidden font-mono text-sm h-[400px] md:h-[600px] flex flex-col">
         {/* Mac window buttons */}
         <div className="flex items-center justify-between p-2 flex-shrink-0">
           <div className="flex items-center gap-1.5">
@@ -361,8 +361,8 @@ function WorkspaceView({ activeView, isSectionExpanded, onToggleSection, onOpenF
 function AgentContextView() {
   return (
     <div className="flex-1 flex overflow-hidden">
-      {/* Left panel - Agent Thread (2/5 width) */}
-      <div className="w-2/5 border-r border-zinc-800 flex flex-col overflow-hidden">
+      {/* Left panel - Agent Thread (2/5 width) - full width on mobile */}
+      <div className="w-full md:w-2/5 md:border-r border-zinc-800 flex flex-col overflow-hidden">
         <div className="p-4 space-y-2 overflow-y-auto flex-1 demo-scrollbar text-xs">
           <div className="text-zinc-500">→ ~/workspace</div>
 
@@ -418,8 +418,8 @@ function AgentContextView() {
         </div>
       </div>
 
-      {/* Middle panel - Code Editor (2/5 width) */}
-      <div className="w-2/5 border-r border-zinc-800 flex flex-col overflow-hidden bg-zinc-950">
+      {/* Middle panel - Code Editor (2/5 width) - hidden on mobile */}
+      <div className="hidden md:flex w-2/5 border-r border-zinc-800 flex-col overflow-hidden bg-zinc-950">
         <div className="px-4 py-2 border-b border-zinc-800 flex items-center justify-between text-xs">
           <span className="text-zinc-400">src/tasks.ts</span>
           <span className="text-zinc-600">[+] modified</span>
@@ -515,8 +515,8 @@ function AgentContextView() {
         </div>
       </div>
 
-      {/* Right panel - Mod Sync Panel (1/5 width) */}
-      <div className="w-1/5 overflow-y-auto p-4 demo-scrollbar font-mono text-xs">
+      {/* Right panel - Mod Sync Panel (1/5 width) - hidden on mobile */}
+      <div className="hidden md:block w-1/5 overflow-y-auto p-4 demo-scrollbar font-mono text-xs">
         <div className="space-y-1">
           <div className="text-zinc-400">$ mod sync --watch</div>
           <div className="text-zinc-500 mt-2">watching feat/task-system...</div>
@@ -545,8 +545,8 @@ function AgentContextView() {
 function SpecCollaborationView() {
   return (
     <div className="flex-1 flex overflow-hidden">
-      {/* Left panel - Agent Thread */}
-      <div className="w-1/2 border-r border-zinc-800 flex flex-col overflow-hidden">
+      {/* Left panel - Agent Thread - full width on mobile */}
+      <div className="w-full md:w-1/2 md:border-r border-zinc-800 flex flex-col overflow-hidden">
         <div className="p-4 space-y-2 overflow-y-auto flex-1 demo-scrollbar text-xs">
           <div className="text-zinc-500">→ ~/workspace</div>
 
@@ -599,8 +599,8 @@ function SpecCollaborationView() {
         </div>
       </div>
 
-      {/* Right panel - Neovim-style Markdown Editor */}
-      <div className="w-1/2 flex flex-col overflow-hidden bg-zinc-950">
+      {/* Right panel - Neovim-style Markdown Editor - hidden on mobile */}
+      <div className="hidden md:flex w-1/2 flex-col overflow-hidden bg-zinc-950">
         <div className="px-4 py-2 border-b border-zinc-800 flex items-center justify-between text-xs">
           <span className="text-zinc-400">specs/workspace.md</span>
           <span className="text-zinc-600">[+] modified</span>
@@ -654,8 +654,8 @@ function SpecCollaborationView() {
 function TracingView() {
   return (
     <div className="flex-1 flex overflow-hidden">
-      {/* Left panel - Agent Thread */}
-      <div className="w-1/2 border-r border-zinc-800 flex flex-col overflow-hidden">
+      {/* Left panel - Agent Thread - hidden on mobile, show trace report instead */}
+      <div className="hidden md:flex w-1/2 border-r border-zinc-800 flex-col overflow-hidden">
         <div className="p-4 space-y-2 overflow-y-auto flex-1 demo-scrollbar text-xs">
           <div className="text-zinc-500">→ ~/workspace</div>
 
@@ -703,8 +703,8 @@ function TracingView() {
         </div>
       </div>
 
-      {/* Right panel - CLI Trace Report */}
-      <div className="w-1/2 overflow-y-auto p-4 demo-scrollbar font-mono text-xs">
+      {/* Right panel - CLI Trace Report - shown on mobile */}
+      <div className="w-full md:w-1/2 overflow-y-auto p-4 demo-scrollbar font-mono text-xs">
         <div className="space-y-1">
           <div className="text-zinc-400">$ mod trace --spec workspace.md</div>
           <div className="text-zinc-600 mt-2 mb-2">─────────────────────────────────────</div>
@@ -767,8 +767,8 @@ function TracingView() {
 function CLIReviewView() {
   return (
     <div className="flex-1 flex overflow-hidden">
-      {/* Left panel - Agent Thread */}
-      <div className="w-1/2 border-r border-zinc-800 flex flex-col overflow-hidden">
+      {/* Left panel - Agent Thread - hidden on mobile */}
+      <div className="hidden md:flex w-1/2 border-r border-zinc-800 flex-col overflow-hidden">
         <div className="p-4 space-y-2 overflow-y-auto flex-1 demo-scrollbar text-xs">
           <div className="text-zinc-500">→ ~/workspace</div>
 
@@ -816,8 +816,8 @@ function CLIReviewView() {
         </div>
       </div>
 
-      {/* Right panel - CLI Review Report */}
-      <div className="w-1/2 overflow-y-auto p-4 demo-scrollbar font-mono text-xs">
+      {/* Right panel - CLI Review Report - shown on mobile */}
+      <div className="w-full md:w-1/2 overflow-y-auto p-4 demo-scrollbar font-mono text-xs">
         <div className="space-y-1">
           <div className="text-zinc-400">$ mod review feat</div>
           <div className="text-zinc-600 mt-2 mb-2">─────────────────────────────────────</div>
@@ -875,8 +875,8 @@ function CLIReviewView() {
 function VersionControlView() {
   return (
     <div className="flex-1 flex overflow-hidden">
-      {/* Left panel - Agent Thread */}
-      <div className="w-1/2 border-r border-zinc-800 flex flex-col overflow-hidden">
+      {/* Left panel - Agent Thread - hidden on mobile */}
+      <div className="hidden md:flex w-1/2 border-r border-zinc-800 flex-col overflow-hidden">
         <div className="p-4 space-y-2 overflow-y-auto flex-1 demo-scrollbar text-xs">
           <div className="text-zinc-500">→ ~/workspace</div>
 
@@ -926,8 +926,8 @@ function VersionControlView() {
         </div>
       </div>
 
-      {/* Right panel - CLI Changelog */}
-      <div className="w-1/2 overflow-y-auto p-4 demo-scrollbar font-mono text-xs">
+      {/* Right panel - CLI Changelog - shown on mobile */}
+      <div className="w-full md:w-1/2 overflow-y-auto p-4 demo-scrollbar font-mono text-xs">
         <div className="text-zinc-400">$ mod log --verbose</div>
         <div className="text-zinc-600 mt-2">────────────────────────────────────────</div>
 

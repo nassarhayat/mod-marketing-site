@@ -72,7 +72,7 @@ export function WebDemo({ activeView = 'spec' }) {
 
   return (
     <div className="w-full min-w-0">
-      <div className="bg-zinc-950 rounded-lg border border-zinc-800 overflow-hidden font-mono text-sm h-[600px] flex flex-col">
+      <div className="bg-zinc-950 rounded-lg border border-zinc-800 overflow-hidden font-mono text-sm h-[400px] md:h-[600px] flex flex-col">
         {/* Mac window buttons */}
         <div className="flex items-center justify-between p-2 flex-shrink-0">
           <div className="flex items-center gap-1.5">
@@ -346,9 +346,9 @@ function WebAgentContextView() {
   }
 
   return (
-    <div className="flex-1 flex overflow-hidden">
+    <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
       {/* Left panel - Agent Thread */}
-      <div className="w-1/2 border-r border-zinc-800 flex flex-col overflow-hidden">
+      <div className="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-zinc-800 flex flex-col overflow-hidden flex-1 md:flex-none">
         <div className="flex-1 overflow-y-auto p-4 space-y-3 demo-scrollbar text-sm">
           <div className="flex items-start gap-3">
             <div className="w-6 h-6 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
@@ -428,7 +428,7 @@ function WebAgentContextView() {
       </div>
 
       {/* Right panel - Richtext Editor */}
-      <div className="w-1/2 flex flex-col overflow-hidden bg-zinc-950">
+      <div className="hidden md:flex w-full md:w-1/2 flex-col overflow-hidden bg-zinc-950">
         <div className="flex-1 overflow-y-auto py-4 px-8 demo-scrollbar">
           <div className="group relative mb-4">
             <div className="absolute -left-6 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-600 cursor-grab text-xs">⋮⋮</div>
@@ -550,8 +550,8 @@ function SpecCollaborationView() {
 
   return (
     <div className="flex-1 flex overflow-hidden">
-      {/* Left panel - Agent Thread (1/4) */}
-      <div className="w-1/4 border-r border-zinc-800 flex flex-col overflow-hidden">
+      {/* Left panel - Agent Thread (1/4) - hidden on mobile */}
+      <div className="hidden lg:flex w-1/4 border-r border-zinc-800 flex-col overflow-hidden">
         <div className="p-3 flex-shrink-0">
           <div className="text-xs text-zinc-500 uppercase tracking-wider">Agent Thread</div>
         </div>
@@ -602,8 +602,8 @@ function SpecCollaborationView() {
       </div>
 
       {/* Middle panel - Notion-style Editor (2/4) */}
-      <div className="w-2/4 border-r border-zinc-800 flex flex-col overflow-hidden bg-zinc-950">
-        <div className="flex-1 overflow-y-auto py-4 px-12 demo-scrollbar">
+      <div className="w-full lg:w-2/4 lg:border-r border-zinc-800 flex flex-col overflow-hidden bg-zinc-950">
+        <div className="flex-1 overflow-y-auto py-4 px-4 md:px-8 lg:px-12 demo-scrollbar">
           {/* Title block */}
           <div className="group relative mb-4">
             <div className="absolute -left-8 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-600 cursor-grab">⋮⋮</div>
@@ -665,8 +665,8 @@ function SpecCollaborationView() {
         </div>
       </div>
 
-      {/* Right panel - Stacked Diffs (1/4) */}
-      <div className="w-1/4 flex flex-col overflow-hidden">
+      {/* Right panel - Stacked Diffs (1/4) - hidden on mobile */}
+      <div className="hidden lg:flex w-1/4 flex-col overflow-hidden">
         <div className="p-3 flex-shrink-0">
           <div className="text-xs text-zinc-500 uppercase tracking-wider">Changes</div>
         </div>
@@ -739,10 +739,10 @@ function WebTracingView() {
   ]
 
   return (
-    <div className="flex-1 flex overflow-hidden">
+    <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
       {/* Left panel - Richtext Editor with highlighted requirement */}
-      <div className="w-1/2 border-r border-zinc-800 flex flex-col overflow-hidden bg-zinc-950">
-        <div className="flex-1 overflow-y-auto py-4 px-8 demo-scrollbar">
+      <div className="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-zinc-800 flex flex-col overflow-hidden bg-zinc-950 flex-1 md:flex-none">
+        <div className="flex-1 overflow-y-auto py-4 px-4 md:px-8 demo-scrollbar">
           <div className="group relative mb-4">
             <h1 className="text-xl font-bold text-zinc-100">{specContent.title}</h1>
           </div>
@@ -775,7 +775,7 @@ function WebTracingView() {
       </div>
 
       {/* Right panel - Code File View */}
-      <div className="w-1/2 flex flex-col overflow-hidden">
+      <div className="hidden md:flex w-full md:w-1/2 flex-col overflow-hidden">
         <div className="px-4 py-2 border-b border-zinc-800 flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
             <span className="text-zinc-500">◇</span>
@@ -904,8 +904,8 @@ function WebVersionControlView() {
 
   return (
     <div className="flex-1 flex overflow-hidden">
-      {/* Left panel - File Sidebar */}
-      <div className="w-36 border-r border-zinc-800 overflow-y-auto text-xs flex-shrink-0 demo-scrollbar">
+      {/* Left panel - File Sidebar - hidden on mobile */}
+      <div className="hidden md:block w-36 border-r border-zinc-800 overflow-y-auto text-xs flex-shrink-0 demo-scrollbar">
         <div className="p-2 space-y-1">
           <div className="flex items-center gap-1.5 text-zinc-500 py-1">
             <span className="text-[10px]">▼</span>
@@ -938,8 +938,8 @@ function WebVersionControlView() {
         </div>
       </div>
 
-      {/* Middle panel - Code View */}
-      <div className="w-1/2 border-r border-zinc-800 flex flex-col overflow-hidden">
+      {/* Middle panel - Code View - hidden on mobile, show changelog instead */}
+      <div className="hidden md:flex w-1/2 border-r border-zinc-800 flex-col overflow-hidden">
         <div className="px-4 py-2 border-b border-zinc-800 text-xs text-zinc-400">
           src/{selectedFile}
         </div>
@@ -957,8 +957,8 @@ function WebVersionControlView() {
         </div>
       </div>
 
-      {/* Right panel - GUI Changelog */}
-      <div className="w-1/2 overflow-y-auto p-3 demo-scrollbar">
+      {/* Right panel - GUI Changelog - shown on mobile */}
+      <div className="w-full md:w-1/2 overflow-y-auto p-3 demo-scrollbar">
         <div className="text-xs text-zinc-500 uppercase tracking-wider mb-3">Changelog</div>
         <div className="space-y-3">
           {changelog.map((entry) => (
