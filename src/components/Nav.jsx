@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
-import { Menu, X, ChevronDown } from 'lucide-react'
+import { X, ChevronDown } from 'lucide-react'
 
 function Nav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -79,7 +79,24 @@ function Nav() {
           className="md:hidden p-2 text-white/70 hover:text-white transition-colors"
           aria-label="Toggle menu"
         >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileMenuOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ transform: 'rotate(180deg)' }}
+            >
+              <path
+                d="M5.81248 1V15M4.5 15H11.5C13.433 15 15 13.433 15 11.5V4.5C15 2.567 13.433 1 11.5 1H4.5C2.567 1 1 2.567 1 4.5V11.5C1 13.433 2.567 15 4.5 15Z"
+                stroke="currentColor"
+                strokeWidth="1.2"
+              />
+            </svg>
+          )}
         </button>
       </nav>
 

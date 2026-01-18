@@ -62,7 +62,7 @@ function Hero() {
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white mb-4 leading-tight tracking-tight">
               Collaborate on spec driven development
             </h1>
-            <p className="text-base md:text-xl text-white/50 mb-6 md:mb-10">The collaboration layer for teams working with coding agents</p>
+            <p className="text-lg md:text-xl text-white/50 mb-6 md:mb-10">The collaboration layer for teams working with coding agents</p>
 
             {/* Agent input */}
             <div className="bg-white/[0.08] border border-white/[0.08] rounded-xl p-1 max-w-xl mx-auto">
