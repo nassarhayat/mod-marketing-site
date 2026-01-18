@@ -28,7 +28,7 @@ function Usecases() {
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6 md:mb-8">
           <div>
             <h2 className="text-xl md:text-2xl font-semibold text-white mb-2 md:mb-3">Usecases</h2>
-            <p className="text-base md:text-lg text-white/50">Spec, build, and ship from first idea to production</p>
+            <p className="text-base md:text-lg text-white/50">Spec, build, and review from first idea to production</p>
           </div>
 
           {/* Demo Mode Toggle - below header on mobile */}
