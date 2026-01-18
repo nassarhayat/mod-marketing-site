@@ -71,7 +71,7 @@ function Usecases() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                 activeTab === tab.id
                   ? 'bg-white text-black'
                   : 'bg-white/[0.05] text-white/60 hover:bg-white/[0.08] hover:text-white/80'
@@ -83,8 +83,8 @@ function Usecases() {
         </div>
 
         {/* Tab description */}
-        <div className="py-4 text-center max-w-2xl mx-auto">
-          <p className="text-white/50 text-base leading-relaxed">{descriptions[activeTab]}</p>
+        <div className="py-4 text-center max-w-7xl mx-auto">
+          <p className="text-white/50 text-xl leading-relaxed">{descriptions[activeTab]}</p>
         </div>
       </div>
     </section>

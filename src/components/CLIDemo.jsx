@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
-import { MessageCircle } from "lucide-react"
 
 const SPINNER_FRAMES = ['·', '✻', '✽', '✶', '✳', '✢']
+const SYNC_COLORS = ['rgba(239, 68, 68, 0.6)', 'rgba(255, 255, 255, 0.6)', 'rgba(59, 130, 246, 0.6)'] // red, white, blue (60% opacity)
 
 function Spinner() {
   const [frame, setFrame] = useState(0)
@@ -14,6 +14,24 @@ function Spinner() {
   }, [])
 
   return <span style={{ color: '#C15F3C' }}>{SPINNER_FRAMES[frame]}</span>
+}
+
+function SyncIndicator() {
+  const [colorIndex, setColorIndex] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setColorIndex(i => (i + 1) % SYNC_COLORS.length)
+    }, 800)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <span
+      className="inline-block w-2 h-2 rounded-full"
+      style={{ backgroundColor: SYNC_COLORS[colorIndex] }}
+    />
+  )
 }
 
 export function CLIDemo({ activeView = 'spec' }) {
@@ -29,7 +47,7 @@ export function CLIDemo({ activeView = 'spec' }) {
       case 'spec':
         return 'spec-collab'
       case 'tracing':
-        return 'workspace'
+        return 'tracing'
       case 'agent-context':
         return 'agent'
       case 'version-control':
@@ -80,24 +98,14 @@ export function CLIDemo({ activeView = 'spec' }) {
             <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
             <span className="ml-2 text-xs text-zinc-500">
-              {(currentView === 'agent' || currentView === 'changelog') ? 'claude code' : 'mod workspace'}
+              {(currentView === 'spec-collab' || currentView === 'agent' || currentView === 'review') ? 'claude code' : 'mod workspace'}
             </span>
           </div>
-          {currentView !== 'agent' && currentView !== 'changelog' && (
-            <div className="flex items-center gap-3">
-              <button className="text-zinc-500 hover:text-zinc-300 transition-colors text-xs">
-                Share
-              </button>
-              <button className="text-zinc-500 hover:text-zinc-300 transition-colors">
-                <MessageCircle size={14} />
-              </button>
-            </div>
-          )}
         </div>
 
         <div className="flex flex-1 overflow-hidden">
-          {/* File sidebar - hidden for agent context, version control, and spec collab views */}
-          {currentView !== 'agent' && currentView !== 'changelog' && currentView !== 'spec-collab' && (
+          {/* File sidebar - hidden for agent context, version control, spec collab, and tracing views */}
+          {currentView !== 'agent' && currentView !== 'changelog' && currentView !== 'spec-collab' && currentView !== 'tracing' && currentView !== 'review' && (
             <Sidebar
               currentView={currentView}
               activeView={activeView}
@@ -112,8 +120,10 @@ export function CLIDemo({ activeView = 'spec' }) {
           <div className="flex-1 overflow-hidden flex flex-col">
             {currentView === 'spec-collab' ? (
               <SpecCollaborationView />
+            ) : currentView === 'tracing' ? (
+              <TracingView />
             ) : currentView === 'review' ? (
-              <BranchReviewView onClose={closeFile} />
+              <CLIReviewView />
             ) : currentView === 'agent' ? (
               <AgentContextView />
             ) : currentView === 'changelog' ? (
@@ -349,305 +359,10 @@ function WorkspaceView({ activeView, isSectionExpanded, onToggleSection, onOpenF
 }
 
 function AgentContextView() {
-  const scrollRef = useRef(null)
-
-  return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Terminal - full width */}
-      <div ref={scrollRef} className="p-4 space-y-2 overflow-y-auto flex-1 demo-scrollbar text-xs">
-        <div className="text-zinc-500">→ ~/workspace</div>
-
-        <div className="text-zinc-400 mt-4">
-          &gt; Build a task management system with persistence
-        </div>
-
-        <div className="space-y-2 mt-3">
-          <div className="text-zinc-400 flex items-start gap-2">
-            <span style={{ color: '#C15F3C' }}>✻</span>
-            <div>I'll implement the task system based on your spec.</div>
-          </div>
-        </div>
-
-        <div className="mt-3 text-zinc-500 ml-4">✓ Read workspace.md</div>
-
-        <div className="mt-4 text-zinc-400">&gt; build workspace.md</div>
-
-        <div className="mt-3 space-y-2">
-          <div className="text-zinc-400 flex items-start gap-2">
-            <Spinner />
-            <div>Implementing task creation...</div>
-          </div>
-          <div className="text-zinc-500 ml-4 space-y-1">
-            <div>→ Writing src/tasks.ts</div>
-            <div>→ Writing src/tasks.test.ts</div>
-            <div>+ Tracing create-task--3b55e97d</div>
-            <div>+ Added reasoning: "Title validation prevents empty tasks"</div>
-          </div>
-        </div>
-
-        <div className="mt-3 space-y-2">
-          <div className="text-zinc-400 flex items-start gap-2">
-            <Spinner />
-            <div>Implementing persistence...</div>
-          </div>
-          <div className="text-zinc-500 ml-4 space-y-1">
-            <div>→ Writing src/storage.ts</div>
-            <div>+ Tracing persist-tasks--a7f3d2c1</div>
-            <div>+ Added reasoning: "localStorage for browser persistence"</div>
-          </div>
-        </div>
-
-        <div className="mt-4 ml-4 space-y-1">
-          <div className="text-blue-400">PreHook: 2 comments, 3 specs, 4 agent changes</div>
-          <div className="text-zinc-500">Read(src/components/Component.tsx)</div>
-          <div className="text-zinc-500">Update(...)</div>
-          <div className="text-blue-400">PostHook: saved change</div>
-        </div>
-      </div>
-
-      <div className="border-t border-zinc-800 p-3 flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <span className="text-zinc-500">→</span>
-          <input
-            type="text"
-            placeholder="Ask Claude..."
-            className="flex-1 bg-transparent text-zinc-400 text-xs outline-none"
-            disabled
-          />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function SpecCollaborationView() {
-  const [expandedFiles, setExpandedFiles] = useState(new Set(['tasks.ts']))
-
-  const specContent = {
-    title: 'Task Management System',
-    abstract: 'A lightweight task management module for tracking todos with browser persistence and filtering capabilities.',
-    problem: 'Users need a simple way to track tasks that persists across sessions without requiring a backend or account creation.',
-    approach: 'Implement a client-side task system using localStorage for persistence, with a clean API for CRUD operations and status filtering.',
-    requirements: [
-      {
-        id: 'create-task',
-        text: 'Users can create tasks with a title',
-        status: 'implemented',
-        glasswareId: '3b55e97d'
-      },
-      {
-        id: 'persist-tasks',
-        text: 'Tasks must persist across browser sessions',
-        status: 'implemented',
-        glasswareId: 'a7f3d2c1'
-      },
-      {
-        id: 'filter-tasks',
-        text: 'Users can filter tasks by status',
-        status: 'in-progress',
-        glasswareId: '8e2c9f4a'
-      }
-    ]
-  }
-
-  const changedFiles = [
-    { name: 'tasks.ts', additions: 12, deletions: 0, diff: `export function createTask(title: string): Task {
-+ if (!title.trim()) {
-+   throw new Error("Title required")
-+ }
-+ return {
-+   id: crypto.randomUUID(),
-+   title: title.trim(),
-+   completed: false
-+ }
-}` },
-    { name: 'storage.ts', additions: 15, deletions: 0, diff: `export class TaskStorage {
-+ save(tasks: Task[]): void {
-+   localStorage.setItem(
-+     this.key,
-+     JSON.stringify(tasks)
-+   )
-+ }
-}` },
-    { name: 'filter.ts', additions: 13, deletions: 0, diff: `export function filterTasks(
-  tasks: Task[],
-  filter: "all" | "active" | "done"
-): Task[] {
-+ switch (filter) {
-+   case "active":
-+     return tasks.filter(t => !t.completed)
-+   case "done":
-+     return tasks.filter(t => t.completed)
-+ }
-}` }
-  ]
-
   return (
     <div className="flex-1 flex overflow-hidden">
-      {/* Left panel - Agent Thread (1/4) */}
-      <div className="w-1/4 border-r border-zinc-800 flex flex-col overflow-hidden">
-        <div className="p-3 flex-shrink-0">
-          <div className="text-xs text-zinc-500 uppercase tracking-wider">Agent Thread</div>
-        </div>
-        <div className="flex-1 overflow-y-auto p-3 space-y-3 demo-scrollbar text-xs">
-          <div className="flex items-start gap-2">
-            <span style={{ color: '#C15F3C' }}>✻</span>
-            <div className="text-zinc-400">Reading your spec...</div>
-          </div>
-          <div className="text-zinc-500 ml-4">✓ Parsed 3 requirements</div>
-
-          <div className="flex items-start gap-2 mt-3">
-            <span style={{ color: '#C15F3C' }}>✻</span>
-            <div className="text-zinc-400">Starting implementation</div>
-          </div>
-          <div className="text-zinc-500 ml-4 space-y-1">
-            <div>→ tasks.ts created</div>
-            <div>→ storage.ts created</div>
-          </div>
-
-          <div className="flex items-start gap-2 mt-3">
-            <Spinner />
-            <div className="text-zinc-400">Working on filter.ts...</div>
-          </div>
-
-          <div className="mt-4 pt-3 border-t border-zinc-800">
-            <div className="flex gap-2 items-start">
-              <img src={avatars.Frances} alt="Frances" className="w-5 h-5 rounded-full object-cover flex-shrink-0" />
-              <div className="text-zinc-400">Should we add priority levels?</div>
-            </div>
-          </div>
-
-          <div className="flex gap-2 items-start mt-2">
-            <img src={avatars.Ben} alt="Ben" className="w-5 h-5 rounded-full object-cover flex-shrink-0" />
-            <div className="text-zinc-400">Let's keep it simple for v1</div>
-          </div>
-        </div>
-        <div className="border-t border-zinc-800 p-2 flex-shrink-0">
-          <div className="flex items-center gap-2">
-            <span className="text-zinc-500 text-xs">→</span>
-            <input
-              type="text"
-              placeholder="Reply..."
-              className="flex-1 bg-transparent text-zinc-400 text-xs outline-none"
-              disabled
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Middle panel - Notion-style Editor (2/4) */}
-      <div className="w-2/4 border-r border-zinc-800 flex flex-col overflow-hidden bg-zinc-950">
-        <div className="flex-1 overflow-y-auto py-4 px-12 demo-scrollbar">
-          {/* Title block */}
-          <div className="group relative mb-4">
-            <div className="absolute -left-8 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-600 cursor-grab">⋮⋮</div>
-            <h1 className="text-xl font-bold text-zinc-100">{specContent.title}</h1>
-          </div>
-
-          {/* Abstract */}
-          <div className="group relative mb-3">
-            <div className="absolute -left-8 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-600 cursor-grab">⋮⋮</div>
-            <div className="py-1 px-1 -mx-1 rounded hover:bg-zinc-900/50">
-              <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Abstract</h2>
-              <p className="text-sm text-zinc-300">{specContent.abstract}</p>
-            </div>
-          </div>
-
-          {/* Problem */}
-          <div className="group relative mb-3">
-            <div className="absolute -left-8 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-600 cursor-grab">⋮⋮</div>
-            <div className="py-1 px-1 -mx-1 rounded hover:bg-zinc-900/50">
-              <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Problem</h2>
-              <p className="text-sm text-zinc-300">{specContent.problem}</p>
-            </div>
-          </div>
-
-          {/* Approach */}
-          <div className="group relative mb-4">
-            <div className="absolute -left-8 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-600 cursor-grab">⋮⋮</div>
-            <div className="py-1 px-1 -mx-1 rounded hover:bg-zinc-900/50">
-              <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Approach</h2>
-              <p className="text-sm text-zinc-300">{specContent.approach}</p>
-            </div>
-          </div>
-
-          {/* Requirements header */}
-          <div className="group relative mb-2">
-            <div className="absolute -left-8 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-600 cursor-grab">⋮⋮</div>
-            <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider py-1">Requirements</h2>
-          </div>
-
-          {/* Requirement blocks */}
-          {specContent.requirements.map((req) => (
-            <div key={req.id} className="group relative mb-1">
-              <div className="absolute -left-8 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-600 cursor-grab">⋮⋮</div>
-              <div className="flex items-start gap-2 py-1 px-1 -mx-1 rounded hover:bg-zinc-900/50">
-                <button className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${
-                  req.status === 'implemented'
-                    ? 'bg-blue-500 border-blue-500 text-white'
-                    : 'border-zinc-600 hover:border-zinc-500'
-                }`}>
-                  {req.status === 'implemented' && <span className="text-xs">✓</span>}
-                </button>
-                <span className={`text-sm ${req.status === 'implemented' ? 'text-zinc-400' : 'text-zinc-200'}`}>
-                  {req.text}
-                  <span className="text-yellow-600/60 text-xs font-mono ml-2">{req.glasswareId}</span>
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Right panel - Stacked Diffs (1/4) */}
-      <div className="w-1/4 flex flex-col overflow-hidden">
-        <div className="p-3 flex-shrink-0">
-          <div className="text-xs text-zinc-500 uppercase tracking-wider">Changes</div>
-        </div>
-        <div className="flex-1 overflow-y-auto p-2 space-y-2 demo-scrollbar">
-          {changedFiles.map((file) => (
-            <div key={file.name} className="bg-zinc-900 border border-zinc-700 rounded-lg overflow-hidden">
-              <button
-                onClick={() => setExpandedFiles(prev => {
-                  const next = new Set(prev)
-                  next.has(file.name) ? next.delete(file.name) : next.add(file.name)
-                  return next
-                })}
-                className="w-full flex items-center justify-between px-2 py-1.5 hover:bg-zinc-800/50"
-              >
-                <span className="text-white text-xs font-mono truncate">{file.name}</span>
-                <div className="flex items-center gap-1 text-xs flex-shrink-0">
-                  <span className="text-blue-400">+{file.additions}</span>
-                  <span className="text-zinc-500">{expandedFiles.has(file.name) ? '▼' : '▶'}</span>
-                </div>
-              </button>
-              {expandedFiles.has(file.name) && (
-                <div className="border-t border-zinc-700 text-xs font-mono max-h-32 overflow-y-auto demo-scrollbar">
-                  {file.diff.split('\n').map((line, i) => {
-                    const isAddition = line.startsWith('+')
-                    const content = isAddition ? line.slice(1) : line
-                    return (
-                      <div key={i} className={`px-2 py-0.5 ${isAddition ? 'bg-blue-500/10' : ''}`}>
-                        {isAddition && <span className="text-blue-400 mr-1">+</span>}
-                        <span className={`whitespace-pre ${isAddition ? 'text-white' : 'text-zinc-400'}`}>{content}</span>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function VersionControlView() {
-  return (
-    <div className="flex-1 flex md:flex-row flex-col overflow-hidden">
-      {/* Terminal - left side */}
-      <div className="md:w-1/2 w-full md:border-r border-zinc-800 flex flex-col">
+      {/* Left panel - Agent Thread (2/5 width) */}
+      <div className="w-2/5 border-r border-zinc-800 flex flex-col overflow-hidden">
         <div className="p-4 space-y-2 overflow-y-auto flex-1 demo-scrollbar text-xs">
           <div className="text-zinc-500">→ ~/workspace</div>
 
@@ -668,7 +383,7 @@ function VersionControlView() {
 
           <div className="mt-3 space-y-2">
             <div className="text-zinc-400 flex items-start gap-2">
-              <span style={{ color: '#C15F3C' }}>✓</span>
+              <Spinner />
               <div>Implementing task creation...</div>
             </div>
             <div className="text-zinc-500 ml-4 space-y-1">
@@ -680,20 +395,13 @@ function VersionControlView() {
 
           <div className="mt-3 space-y-2">
             <div className="text-zinc-400 flex items-start gap-2">
-              <span style={{ color: '#C15F3C' }}>✓</span>
+              <Spinner />
               <div>Implementing persistence...</div>
             </div>
             <div className="text-zinc-500 ml-4 space-y-1">
               <div>→ Writing src/storage.ts</div>
               <div>+ Tracing persist-tasks--a7f3d2c1</div>
             </div>
-          </div>
-
-          <div className="mt-4 ml-4 space-y-1">
-            <div className="text-blue-400">PreHook: 2 comments, 3 specs, 4 agent changes</div>
-            <div className="text-zinc-500">Read(src/components/Component.tsx)</div>
-            <div className="text-zinc-500">Update(...)</div>
-            <div className="text-blue-400">PostHook: saved change</div>
           </div>
         </div>
 
@@ -710,28 +418,544 @@ function VersionControlView() {
         </div>
       </div>
 
-      {/* Changelog - right side (terminal log style) */}
-      <div className="md:w-1/2 w-full overflow-y-auto pt-0 pb-4 px-4 demo-scrollbar md:border-t-0 border-t border-zinc-800 font-mono text-xs">
+      {/* Middle panel - Code Editor (2/5 width) */}
+      <div className="w-2/5 border-r border-zinc-800 flex flex-col overflow-hidden bg-zinc-950">
+        <div className="px-4 py-2 border-b border-zinc-800 flex items-center justify-between text-xs">
+          <span className="text-zinc-400">src/tasks.ts</span>
+          <span className="text-zinc-600">[+] modified</span>
+        </div>
+        <div className="flex-1 overflow-y-auto demo-scrollbar font-mono text-xs">
+          {[
+            { num: 1, content: '// @trace[create-task--3b55e97d]', color: 'text-yellow-600' },
+            { num: 2, content: 'export function createTask(title: string): Task {', keyword: true },
+            { num: 3, content: '  if (!title.trim()) {', keyword: true },
+            { num: 4, content: '    throw new Error("Title required")', string: true },
+            { num: 5, content: '  }' },
+            { num: 6, content: '' },
+            { num: 7, content: '  return {', keyword: true },
+            { num: 8, content: '    id: crypto.randomUUID(),', method: true },
+            { num: 9, content: '    title: title.trim(),', method: true },
+            { num: 10, content: '    completed: false,', keyword: true },
+            { num: 11, content: '    createdAt: new Date()', keyword: true },
+            { num: 12, content: '  }' },
+            { num: 13, content: '}' },
+            { num: 14, content: '' },
+            { num: 15, content: 'export function updateTask(', keyword: true },
+            { num: 16, content: '  task: Task,', type: true },
+            { num: 17, content: '  updates: Partial<Task>', type: true, active: true },
+          ].map((line) => (
+            <div key={line.num} className={`flex ${line.active ? 'bg-zinc-800/50' : 'hover:bg-zinc-900/30'}`}>
+              <div className="w-8 text-right pr-2 text-zinc-600 select-none py-0.5 flex-shrink-0">
+                {line.num}
+              </div>
+              <div className="flex-1 py-0.5 whitespace-pre">
+                {line.color ? (
+                  <span className={line.color}>{line.content}</span>
+                ) : line.keyword ? (
+                  <span>
+                    {line.content.split(/(\b(?:export|function|if|throw|new|return|const|let|var|true|false)\b|(?:string|Task|Partial|Date|Error))/g).map((part, i) => {
+                      if (['export', 'function', 'if', 'throw', 'new', 'return', 'const', 'let', 'var', 'true', 'false'].includes(part)) {
+                        return <span key={i} className="text-purple-400">{part}</span>
+                      }
+                      if (['string', 'Task', 'Partial', 'Date', 'Error'].includes(part)) {
+                        return <span key={i} className="text-cyan-400">{part}</span>
+                      }
+                      if (part.includes('"')) {
+                        return <span key={i} className="text-green-400">{part}</span>
+                      }
+                      return <span key={i} className="text-zinc-300">{part}</span>
+                    })}
+                  </span>
+                ) : line.method ? (
+                  <span>
+                    {line.content.split(/(randomUUID|trim|setItem|getItem)/g).map((part, i) => {
+                      if (['randomUUID', 'trim', 'setItem', 'getItem'].includes(part)) {
+                        return <span key={i} className="text-yellow-300">{part}</span>
+                      }
+                      return <span key={i} className="text-zinc-300">{part}</span>
+                    })}
+                  </span>
+                ) : line.type ? (
+                  <span>
+                    {line.content.split(/(Task|Partial)/g).map((part, i) => {
+                      if (['Task', 'Partial'].includes(part)) {
+                        return <span key={i} className="text-cyan-400">{part}</span>
+                      }
+                      return <span key={i} className="text-zinc-300">{part}</span>
+                    })}
+                  </span>
+                ) : line.string ? (
+                  <span>
+                    {line.content.split(/(".*?")/g).map((part, i) => {
+                      if (part.startsWith('"')) {
+                        return <span key={i} className="text-green-400">{part}</span>
+                      }
+                      if (['throw', 'new', 'Error'].some(k => part.includes(k))) {
+                        return <span key={i}>{part.split(/(throw|new|Error)/g).map((p, j) =>
+                          ['throw', 'new'].includes(p) ? <span key={j} className="text-purple-400">{p}</span> :
+                          p === 'Error' ? <span key={j} className="text-cyan-400">{p}</span> :
+                          <span key={j} className="text-zinc-300">{p}</span>
+                        )}</span>
+                      }
+                      return <span key={i} className="text-zinc-300">{part}</span>
+                    })}
+                  </span>
+                ) : (
+                  <span className="text-zinc-300">{line.content}</span>
+                )}
+                {line.active && <span className="animate-pulse">│</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="px-4 py-1 bg-zinc-800 text-xs text-zinc-500 flex justify-between">
+          <span>NORMAL</span>
+          <span>17:42</span>
+          <span>typescript</span>
+        </div>
+      </div>
+
+      {/* Right panel - Mod Sync Panel (1/5 width) */}
+      <div className="w-1/5 overflow-y-auto p-4 demo-scrollbar font-mono text-xs">
         <div className="space-y-1">
-          <div className="text-zinc-500">sarah@macbook ~/workspace</div>
-          <div className="text-zinc-400 mt-2">$ mod sync</div>
-          <div className="text-zinc-500 mt-2">syncing feat/task-system...</div>
-          <div className="text-zinc-600 mt-2 mb-2">─────────────────────────────────</div>
+          <div className="text-zinc-400">$ mod sync --watch</div>
+          <div className="text-zinc-500 mt-2">watching feat/task-system...</div>
+          <div className="text-zinc-600 mt-2 mb-2">───────────────────</div>
 
           <div className="text-zinc-500">[09:38] <span className="text-blue-400">prompt</span> "Build a task management system..." <span className="text-zinc-600">(@sarah)</span></div>
-          <div className="text-zinc-500">[09:39] <span className="text-blue-400">create</span> workspace.md <span className="text-zinc-600">(claude)</span></div>
-          <div className="text-zinc-500">[09:40] <span className="text-blue-400">edit</span> tasks.ts:1-12 <span className="text-zinc-600">(claude)</span></div>
-          <div className="text-zinc-500">[09:41] <span className="text-blue-400">comment</span> "What if localStorage is full?" <span className="text-zinc-600">(@frances)</span></div>
-          <div className="text-zinc-500">[09:42] <span className="text-blue-400">edit</span> storage.ts:1-15 <span className="text-zinc-600">(claude)</span></div>
-          <div className="text-zinc-500">[09:43] <span className="text-blue-400">comment</span> "The filter buttons look great!" <span className="text-zinc-600">(@ben)</span></div>
-          <div className="text-zinc-500">[09:44] <span className="text-blue-400">edit</span> filter.ts:1-13 <span className="text-zinc-600">(claude)</span></div>
-          <div className="text-zinc-500">[09:45] <span className="text-blue-400">review</span> PR approved by @mike <span className="text-zinc-600">(@sarah)</span></div>
+          <div className="text-zinc-500">[09:39] <span className="text-blue-400">read</span> workspace.md <span className="text-zinc-600">(claude)</span></div>
+          <div className="text-zinc-500">[09:40] <span className="text-blue-400">write</span> tasks.ts:1-12 <span className="text-zinc-600">(claude)</span></div>
+          <div className="text-zinc-500">[09:40] <span className="text-blue-400">trace</span> create-task--3b55e97d <span className="text-zinc-600">(claude)</span></div>
+          <div className="text-zinc-500">[09:41] <span className="text-blue-400">write</span> tasks.test.ts:1-14 <span className="text-zinc-600">(claude)</span></div>
+          <div className="text-zinc-500">[09:42] <span className="text-blue-400">write</span> storage.ts:1-15 <span className="text-zinc-600">(claude)</span></div>
+          <div className="text-zinc-500">[09:42] <span className="text-blue-400">trace</span> persist-tasks--a7f3d2c1 <span className="text-zinc-600">(claude)</span></div>
+          <div className="text-zinc-500">[09:43] <span className="text-yellow-400">hook</span> PreHook: 2 comments, 3 specs <span className="text-zinc-600">(system)</span></div>
+          <div className="text-zinc-500">[09:43] <span className="text-yellow-400">hook</span> PostHook: saved change <span className="text-zinc-600">(system)</span></div>
 
-          <div className="text-zinc-600 mt-2">─────────────────────────────────</div>
-          <div className="text-zinc-500 mt-1">
-            <span className="text-green-400">✓</span> synced | 3 specs | 4 files changed
+          <div className="text-zinc-600 mt-2">───────────────────</div>
+          <div className="text-zinc-500 mt-1 flex items-center gap-2">
+            <SyncIndicator /> <span className="text-zinc-400">syncing...</span>
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
+
+function SpecCollaborationView() {
+  return (
+    <div className="flex-1 flex overflow-hidden">
+      {/* Left panel - Agent Thread */}
+      <div className="w-1/2 border-r border-zinc-800 flex flex-col overflow-hidden">
+        <div className="p-4 space-y-2 overflow-y-auto flex-1 demo-scrollbar text-xs">
+          <div className="text-zinc-500">→ ~/workspace</div>
+
+          <div className="text-zinc-400 mt-4">
+            &gt; Let's write a spec for task management
+          </div>
+
+          <div className="space-y-2 mt-3">
+            <div className="text-zinc-400 flex items-start gap-2">
+              <span style={{ color: '#C15F3C' }}>✻</span>
+              <div>I'll help you draft the spec. Let me create workspace.md</div>
+            </div>
+          </div>
+
+          <div className="mt-3 text-zinc-500 ml-4">✓ Created specs/workspace.md</div>
+
+          <div className="mt-4 text-zinc-400">&gt; add persistence requirement</div>
+
+          <div className="mt-3 space-y-2">
+            <div className="text-zinc-400 flex items-start gap-2">
+              <span style={{ color: '#C15F3C' }}>✻</span>
+              <div>Adding persistence requirement to the spec...</div>
+            </div>
+            <div className="text-zinc-500 ml-4 space-y-1">
+              <div>+ Added requirement: persist-tasks</div>
+              <div>+ Assigned ID: a7f3d2c1</div>
+            </div>
+          </div>
+
+          <div className="mt-4 text-zinc-400">&gt; what about filtering?</div>
+
+          <div className="mt-3 space-y-2">
+            <div className="text-zinc-400 flex items-start gap-2">
+              <Spinner />
+              <div>Good idea. Adding filter capability...</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-zinc-800 p-3 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <span className="text-zinc-500">→</span>
+            <input
+              type="text"
+              placeholder="Ask Claude..."
+              className="flex-1 bg-transparent text-zinc-400 text-xs outline-none"
+              disabled
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Right panel - Neovim-style Markdown Editor */}
+      <div className="w-1/2 flex flex-col overflow-hidden bg-zinc-950">
+        <div className="px-4 py-2 border-b border-zinc-800 flex items-center justify-between text-xs">
+          <span className="text-zinc-400">specs/workspace.md</span>
+          <span className="text-zinc-600">[+] modified</span>
+        </div>
+        <div className="flex-1 overflow-y-auto demo-scrollbar font-mono text-xs">
+          {[
+            { num: 1, content: '# Task Management System', color: 'text-blue-400' },
+            { num: 2, content: '' },
+            { num: 3, content: '## Abstract', color: 'text-purple-400' },
+            { num: 4, content: 'A lightweight task management module for tracking' },
+            { num: 5, content: 'todos with browser persistence and filtering.' },
+            { num: 6, content: '' },
+            { num: 7, content: '## Problem', color: 'text-purple-400' },
+            { num: 8, content: 'Users need a simple way to track tasks that persists' },
+            { num: 9, content: 'across sessions without requiring a backend.' },
+            { num: 10, content: '' },
+            { num: 11, content: '## Approach', color: 'text-purple-400' },
+            { num: 12, content: 'Implement client-side task system using localStorage' },
+            { num: 13, content: 'with a clean API for CRUD and status filtering.' },
+            { num: 14, content: '' },
+            { num: 15, content: '## Requirements', color: 'text-purple-400' },
+            { num: 16, content: '' },
+            { num: 17, content: '- [x] Users can create tasks with a title', marker: '3b55e97d' },
+            { num: 18, content: '- [x] Tasks persist across browser sessions', marker: 'a7f3d2c1' },
+            { num: 19, content: '- [ ] Users can filter tasks by status', marker: '8e2c9f4a', active: true },
+          ].map((line) => (
+            <div key={line.num} className={`flex ${line.active ? 'bg-zinc-800/50' : 'hover:bg-zinc-900/30'}`}>
+              <div className="w-8 text-right pr-2 text-zinc-600 select-none py-0.5 flex-shrink-0">
+                {line.num}
+              </div>
+              <div className={`flex-1 py-0.5 ${line.color || 'text-zinc-300'}`}>
+                {line.content}
+                {line.marker && (
+                  <span className="text-yellow-600/60 ml-2">{'<!-- @'}trace:{line.marker}{' -->'}</span>
+                )}
+                {line.active && <span className="animate-pulse">│</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="px-4 py-1 bg-zinc-800 text-xs text-zinc-500 flex justify-between">
+          <span>NORMAL</span>
+          <span className="flex items-center gap-2"><SyncIndicator /> synced</span>
+          <span>markdown</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function TracingView() {
+  return (
+    <div className="flex-1 flex overflow-hidden">
+      {/* Left panel - Agent Thread */}
+      <div className="w-1/2 border-r border-zinc-800 flex flex-col overflow-hidden">
+        <div className="p-4 space-y-2 overflow-y-auto flex-1 demo-scrollbar text-xs">
+          <div className="text-zinc-500">→ ~/workspace</div>
+
+          <div className="text-zinc-400 mt-4">
+            &gt; mod trace --spec workspace.md
+          </div>
+
+          <div className="space-y-2 mt-3">
+            <div className="text-zinc-400 flex items-start gap-2">
+              <span style={{ color: '#C15F3C' }}>✻</span>
+              <div>Analyzing spec traces...</div>
+            </div>
+          </div>
+
+          <div className="mt-3 text-zinc-500 ml-4 space-y-1">
+            <div>✓ Found 3 requirements</div>
+            <div>✓ Scanning source files...</div>
+            <div>✓ Found 4 traced implementations</div>
+          </div>
+
+          <div className="mt-4 text-zinc-400">&gt; show untraced</div>
+
+          <div className="mt-3 space-y-2">
+            <div className="text-zinc-400 flex items-start gap-2">
+              <span style={{ color: '#C15F3C' }}>✻</span>
+              <div>Checking coverage...</div>
+            </div>
+            <div className="text-zinc-500 ml-4">
+              <div>All requirements have implementations</div>
+              <div className="text-green-400 mt-1">✓ 100% spec coverage</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-zinc-800 p-3 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <span className="text-zinc-500">→</span>
+            <input
+              type="text"
+              placeholder="Ask Claude..."
+              className="flex-1 bg-transparent text-zinc-400 text-xs outline-none"
+              disabled
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Right panel - CLI Trace Report */}
+      <div className="w-1/2 overflow-y-auto p-4 demo-scrollbar font-mono text-xs">
+        <div className="space-y-1">
+          <div className="text-zinc-400">$ mod trace --spec workspace.md</div>
+          <div className="text-zinc-600 mt-2 mb-2">─────────────────────────────────────</div>
+
+          <div className="text-white font-semibold">TRACE REPORT</div>
+          <div className="text-zinc-500 mb-3">specs/workspace.md → src/</div>
+
+          <div className="text-zinc-400 mt-4 mb-2">Requirements:</div>
+
+          <div className="ml-2 space-y-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-green-400">✓</span>
+                <span className="text-zinc-300">create-task</span>
+                <span className="text-yellow-600">3b55e97d</span>
+              </div>
+              <div className="text-zinc-500 ml-4 mt-1">
+                <div>→ src/tasks.ts:1-12 <span className="text-blue-400">+12</span></div>
+                <div>→ src/tasks.test.ts:3-14 <span className="text-blue-400">+14</span></div>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-green-400">✓</span>
+                <span className="text-zinc-300">persist-tasks</span>
+                <span className="text-yellow-600">a7f3d2c1</span>
+              </div>
+              <div className="text-zinc-500 ml-4 mt-1">
+                <div>→ src/storage.ts:1-15 <span className="text-blue-400">+15</span></div>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-green-400">✓</span>
+                <span className="text-zinc-300">filter-tasks</span>
+                <span className="text-yellow-600">8e2c9f4a</span>
+              </div>
+              <div className="text-zinc-500 ml-4 mt-1">
+                <div>→ src/filter.ts:1-13 <span className="text-blue-400">+13</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-zinc-600 mt-4 mb-2">─────────────────────────────────────</div>
+
+          <div className="text-zinc-400">Summary:</div>
+          <div className="ml-2 mt-1 space-y-1">
+            <div><span className="text-green-400">3/3</span> requirements traced</div>
+            <div><span className="text-blue-400">4</span> files updated</div>
+            <div><span className="text-blue-400">+54</span> lines added</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function CLIReviewView() {
+  return (
+    <div className="flex-1 flex overflow-hidden">
+      {/* Left panel - Agent Thread */}
+      <div className="w-1/2 border-r border-zinc-800 flex flex-col overflow-hidden">
+        <div className="p-4 space-y-2 overflow-y-auto flex-1 demo-scrollbar text-xs">
+          <div className="text-zinc-500">→ ~/workspace</div>
+
+          <div className="text-zinc-400 mt-4">
+            &gt; mod review feat
+          </div>
+
+          <div className="space-y-2 mt-3">
+            <div className="text-zinc-400 flex items-start gap-2">
+              <span style={{ color: '#C15F3C' }}>✻</span>
+              <div>Analyzing branch for review...</div>
+            </div>
+          </div>
+
+          <div className="mt-3 text-zinc-500 ml-4 space-y-1">
+            <div>✓ Loaded spec context</div>
+            <div>✓ Found 3 traced requirements</div>
+            <div>✓ Found 2 agent threads</div>
+            <div>✓ Found 2 comments</div>
+          </div>
+
+          <div className="mt-4 text-zinc-400">&gt; any untraced code?</div>
+
+          <div className="mt-3 space-y-2">
+            <div className="text-zinc-400 flex items-start gap-2">
+              <span style={{ color: '#C15F3C' }}>✻</span>
+              <div>Checking for orphaned changes...</div>
+            </div>
+            <div className="text-zinc-500 ml-4">
+              <div className="text-green-400">✓ All changes traced to specs</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-zinc-800 p-3 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <span className="text-zinc-500">→</span>
+            <input
+              type="text"
+              placeholder="Ask Claude..."
+              className="flex-1 bg-transparent text-zinc-400 text-xs outline-none"
+              disabled
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Right panel - CLI Review Report */}
+      <div className="w-1/2 overflow-y-auto p-4 demo-scrollbar font-mono text-xs">
+        <div className="space-y-1">
+          <div className="text-zinc-400">$ mod review feat</div>
+          <div className="text-zinc-600 mt-2 mb-2">─────────────────────────────────────</div>
+
+          <div className="text-white font-semibold">BRANCH REVIEW</div>
+          <div className="text-zinc-500 mb-3">main ← feat/task-system</div>
+
+          <div className="text-zinc-400 mt-3 mb-2">Specs (3):</div>
+          <div className="ml-2 space-y-1">
+            <div><span className="text-green-400">✓</span> create-task <span className="text-yellow-600">3b55e97d</span></div>
+            <div><span className="text-green-400">✓</span> persist-tasks <span className="text-yellow-600">a7f3d2c1</span></div>
+            <div><span className="text-green-400">✓</span> filter-tasks <span className="text-yellow-600">8e2c9f4a</span></div>
+          </div>
+
+          <div className="text-zinc-400 mt-4 mb-2">Agent Threads (2):</div>
+          <div className="ml-2 space-y-1 text-zinc-500">
+            <div>◈ "Implemented task creation" <span className="text-zinc-600">(3 msgs)</span></div>
+            <div>◈ "Added localStorage persistence" <span className="text-zinc-600">(2 msgs)</span></div>
+          </div>
+
+          <div className="text-zinc-400 mt-4 mb-2">Comments (2):</div>
+          <div className="ml-2 space-y-1 text-zinc-500">
+            <div>💬 @ben tasks.ts:7 "Should we add due dates?"</div>
+            <div>💬 @frances storage.ts:5 "What if localStorage full?"</div>
+          </div>
+
+          <div className="text-zinc-400 mt-4 mb-2">Files (4):</div>
+          <div className="ml-2 space-y-1">
+            <div className="flex justify-between">
+              <span className="text-zinc-300">tasks.ts</span>
+              <span><span className="text-blue-400">+12</span> <span className="text-zinc-600">createTask()</span> <span className="text-green-400">traced</span></span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-zinc-300">tasks.test.ts</span>
+              <span><span className="text-blue-400">+14</span> <span className="text-zinc-600">describe()</span> <span className="text-green-400">traced</span></span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-zinc-300">storage.ts</span>
+              <span><span className="text-blue-400">+15</span> <span className="text-zinc-600">TaskStorage</span> <span className="text-green-400">traced</span></span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-zinc-300">filter.ts</span>
+              <span><span className="text-blue-400">+13</span> <span className="text-zinc-600">filterTasks()</span> <span className="text-green-400">traced</span></span>
+            </div>
+          </div>
+
+          <div className="text-zinc-600 mt-4 mb-2">─────────────────────────────────────</div>
+          <div className="text-green-400">✓ Ready to merge</div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function VersionControlView() {
+  return (
+    <div className="flex-1 flex overflow-hidden">
+      {/* Left panel - Agent Thread */}
+      <div className="w-1/2 border-r border-zinc-800 flex flex-col overflow-hidden">
+        <div className="p-4 space-y-2 overflow-y-auto flex-1 demo-scrollbar text-xs">
+          <div className="text-zinc-500">→ ~/workspace</div>
+
+          <div className="text-zinc-400 mt-4">
+            &gt; mod log
+          </div>
+
+          <div className="space-y-2 mt-3">
+            <div className="text-zinc-400 flex items-start gap-2">
+              <span style={{ color: '#C15F3C' }}>✻</span>
+              <div>Loading changelog for feat/task-system...</div>
+            </div>
+          </div>
+
+          <div className="mt-3 text-zinc-500 ml-4 space-y-1">
+            <div>✓ Found 3 commits</div>
+            <div>✓ Loaded requirements context</div>
+            <div>✓ Loaded thread history</div>
+          </div>
+
+          <div className="mt-4 text-zinc-400">&gt; mod revert --to 2</div>
+
+          <div className="mt-3 space-y-2">
+            <div className="text-zinc-400 flex items-start gap-2">
+              <span style={{ color: '#C15F3C' }}>✻</span>
+              <div>Reverting to commit 2...</div>
+            </div>
+            <div className="text-zinc-500 ml-4 space-y-1">
+              <div>- Removing filter.ts</div>
+              <div>- Unlinking filter-tasks--8e2c9f4a</div>
+            </div>
+          </div>
+
+          <div className="mt-3 text-green-400 ml-4">✓ Reverted successfully</div>
+        </div>
+
+        <div className="border-t border-zinc-800 p-3 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <span className="text-zinc-500">→</span>
+            <input
+              type="text"
+              placeholder="Ask Claude..."
+              className="flex-1 bg-transparent text-zinc-400 text-xs outline-none"
+              disabled
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Right panel - CLI Changelog */}
+      <div className="w-1/2 overflow-y-auto p-4 demo-scrollbar font-mono text-xs">
+        <div className="text-zinc-400">$ mod log --verbose</div>
+        <div className="text-zinc-600 mt-2">────────────────────────────────────────</div>
+
+        <div className="mt-2 text-yellow-500">commit 3b55e97d</div>
+        <div className="text-zinc-300">Add task creation with title validation</div>
+        <div className="text-zinc-500 mt-1">  req: Users can create tasks</div>
+        <div className="text-zinc-500">  thread: "Implement createTask" (2 msgs)</div>
+        <div className="text-zinc-500">  thread: "Add input validation" (1 msg)</div>
+        <div className="text-zinc-500">  addressed: @ben "Add title length validation"</div>
+        <div className="text-zinc-500">  added: tasks.ts <span className="text-blue-400">+12</span></div>
+        <div className="text-zinc-500">  added: tasks.test.ts <span className="text-blue-400">+14</span></div>
+
+        <div className="mt-3 text-yellow-500">commit a7f3d2c1</div>
+        <div className="text-zinc-300">Add localStorage persistence for tasks</div>
+        <div className="text-zinc-500 mt-1">  req: Tasks must persist across sessions</div>
+        <div className="text-zinc-500">  thread: "Implement TaskStorage" (2 msgs)</div>
+        <div className="text-zinc-500">  addressed: @frances "Handle localStorage quota"</div>
+        <div className="text-zinc-500">  added: storage.ts <span className="text-blue-400">+15</span></div>
+
+        <div className="mt-3 text-yellow-500">commit 8e2c9f4a</div>
+        <div className="text-zinc-300">Add status filter for active/done tasks</div>
+        <div className="text-zinc-500 mt-1">  req: Users can filter tasks by status</div>
+        <div className="text-zinc-500">  thread: "Implement filterTasks" (2 msgs)</div>
+        <div className="text-zinc-500">  added: filter.ts <span className="text-blue-400">+13</span> <span className="text-red-400">-2</span></div>
+
+        <div className="text-zinc-600 mt-3">────────────────────────────────────────</div>
+        <div className="text-zinc-500">3 commits, 3 requirements, 4 files changed</div>
+        <div className="text-zinc-600 mt-2">Use `mod revert &lt;commit&gt;` to revert</div>
       </div>
     </div>
   )

@@ -29,7 +29,7 @@ export function WebDemo({ activeView = 'spec' }) {
       case 'spec':
         return 'spec-collab'
       case 'tracing':
-        return 'workspace'
+        return 'tracing'
       case 'agent-context':
         return 'agent'
       case 'version-control':
@@ -79,47 +79,31 @@ export function WebDemo({ activeView = 'spec' }) {
             <div className="w-2 h-2 rounded-full bg-red-500"></div>
             <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
             <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="ml-2 text-xs text-zinc-500">
-              {(currentView === 'agent' || currentView === 'changelog') ? 'claude code' : 'mod workspace'}
-            </span>
+            <span className="ml-2 text-xs text-zinc-500">mod workspace</span>
           </div>
-          {currentView !== 'agent' && currentView !== 'changelog' && (
-            <div className="flex items-center gap-3">
-              <button className="text-zinc-500 hover:text-zinc-300 transition-colors text-xs">
-                Share
-              </button>
-              <button className="text-zinc-500 hover:text-zinc-300 transition-colors">
-                <MessageCircle size={14} />
-              </button>
-            </div>
-          )}
+          <div className="flex items-center gap-3">
+            <button className="text-zinc-500 hover:text-zinc-300 transition-colors text-xs">
+              Share
+            </button>
+            <button className="text-zinc-500 hover:text-zinc-300 transition-colors">
+              <MessageCircle size={14} />
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-1 overflow-hidden">
-          {/* File sidebar - hidden for agent context, version control, and spec collab views */}
-          {currentView !== 'agent' && currentView !== 'changelog' && currentView !== 'spec-collab' && (
-            <Sidebar
-              currentView={currentView}
-              activeView={activeView}
-              selectedFile={selectedFile}
-              onSelectWorkspace={closeFile}
-              onSelectFile={openFile}
-              onSelectReview={() => setInternalView('review')}
-            />
-          )}
-
-          {/* Main content */}
+          {/* Main content - each view handles its own layout */}
           <div className="flex-1 overflow-hidden flex flex-col">
             {currentView === 'spec-collab' ? (
               <SpecCollaborationView />
+            ) : currentView === 'tracing' ? (
+              <WebTracingView />
             ) : currentView === 'review' ? (
               <BranchReviewView onClose={closeFile} />
             ) : currentView === 'agent' ? (
-              <AgentContextView />
+              <WebAgentContextView />
             ) : currentView === 'changelog' ? (
-              <VersionControlView />
-            ) : internalView === 'file' && selectedFile ? (
-              <CodeFileView file={selectedFile} onClose={closeFile} />
+              <WebVersionControlView />
             ) : (
               <WorkspaceView
                 activeView={activeView}
@@ -348,72 +332,154 @@ function WorkspaceView({ activeView, isSectionExpanded, onToggleSection, onOpenF
   )
 }
 
-function AgentContextView() {
-  const scrollRef = useRef(null)
+function WebAgentContextView() {
+  const specContent = {
+    title: 'Task Management System',
+    abstract: 'A lightweight task management module for tracking todos with browser persistence and filtering capabilities.',
+    problem: 'Users need a simple way to track tasks that persists across sessions without requiring a backend or account creation.',
+    approach: 'Implement a client-side task system using localStorage for persistence, with a clean API for CRUD operations and status filtering.',
+    requirements: [
+      { id: 'create-task', text: 'Users can create tasks with a title', status: 'implemented', glasswareId: '3b55e97d' },
+      { id: 'persist-tasks', text: 'Tasks must persist across browser sessions', status: 'implemented', glasswareId: 'a7f3d2c1' },
+      { id: 'filter-tasks', text: 'Users can filter tasks by status', status: 'in-progress', glasswareId: '8e2c9f4a' }
+    ]
+  }
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Terminal - full width */}
-      <div ref={scrollRef} className="p-4 space-y-2 overflow-y-auto flex-1 demo-scrollbar text-xs">
-        <div className="text-zinc-500">→ ~/workspace</div>
-
-        <div className="text-zinc-400 mt-4">
-          &gt; Build a task management system with persistence
-        </div>
-
-        <div className="space-y-2 mt-3">
-          <div className="text-zinc-400 flex items-start gap-2">
-            <span style={{ color: '#C15F3C' }}>✻</span>
-            <div>I'll implement the task system based on your spec.</div>
+    <div className="flex-1 flex overflow-hidden">
+      {/* Left panel - Agent Thread */}
+      <div className="w-1/2 border-r border-zinc-800 flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 demo-scrollbar text-sm">
+          <div className="flex items-start gap-3">
+            <div className="w-6 h-6 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
+              <span style={{ color: '#C15F3C' }} className="text-xs">✻</span>
+            </div>
+            <div className="text-zinc-300">I'll implement the task system based on your spec.</div>
           </div>
-        </div>
 
-        <div className="mt-3 text-zinc-500 ml-4">✓ Read workspace.md</div>
-
-        <div className="mt-4 text-zinc-400">&gt; build workspace.md</div>
-
-        <div className="mt-3 space-y-2">
-          <div className="text-zinc-400 flex items-start gap-2">
-            <Spinner />
-            <div>Implementing task creation...</div>
+          <div className="ml-9 text-zinc-500 text-xs space-y-1">
+            <div>✓ Read workspace.md</div>
+            <div>✓ Parsed 3 requirements</div>
           </div>
-          <div className="text-zinc-500 ml-4 space-y-1">
+
+          <div className="flex items-start gap-3 mt-4">
+            <div className="w-6 h-6 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
+              <span style={{ color: '#C15F3C' }} className="text-xs">✻</span>
+            </div>
+            <div className="text-zinc-300">Starting with task creation...</div>
+          </div>
+
+          <div className="ml-9 text-zinc-500 text-xs space-y-1">
             <div>→ Writing src/tasks.ts</div>
             <div>→ Writing src/tasks.test.ts</div>
-            <div>+ Tracing create-task--3b55e97d</div>
-            <div>+ Added reasoning: "Title validation prevents empty tasks"</div>
+            <div className="text-yellow-600">+ Linked to create-task (3b55e97d)</div>
+          </div>
+
+          <div className="flex items-start gap-3 mt-4">
+            <div className="w-6 h-6 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
+              <Spinner />
+            </div>
+            <div className="text-zinc-300">Implementing persistence layer...</div>
+          </div>
+
+          <div className="mt-6 pt-4 border-t border-zinc-800">
+            <div className="flex gap-3 items-start">
+              <img src={avatars.Frances} alt="Frances" className="w-6 h-6 rounded-full object-cover flex-shrink-0" />
+              <div className="bg-zinc-900 rounded-lg px-3 py-2 text-sm text-zinc-300">
+                Should we add priority levels to tasks?
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-3 items-start">
+            <img src={avatars.Ben} alt="Ben" className="w-6 h-6 rounded-full object-cover flex-shrink-0" />
+            <div className="bg-zinc-900 rounded-lg px-3 py-2 text-sm text-zinc-300">
+              Let's keep it simple for v1
+            </div>
           </div>
         </div>
 
-        <div className="mt-3 space-y-2">
-          <div className="text-zinc-400 flex items-start gap-2">
-            <Spinner />
-            <div>Implementing persistence...</div>
+        {/* GUI Input */}
+        <div className="border-t border-zinc-800 p-3 flex-shrink-0">
+          <div className="flex items-center gap-2 bg-zinc-900 rounded-lg border border-zinc-700 px-3 py-2">
+            <button className="text-zinc-500 hover:text-zinc-300 transition-colors">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+              </svg>
+            </button>
+            <button className="text-zinc-500 hover:text-zinc-300 transition-colors">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <polyline points="21 15 16 10 5 21" />
+              </svg>
+            </button>
+            <input
+              type="text"
+              placeholder="Message Claude..."
+              className="flex-1 bg-transparent text-zinc-300 text-sm outline-none"
+              disabled
+            />
+            <button className="bg-white text-black px-3 py-1 rounded-md text-xs font-medium hover:bg-zinc-200 transition-colors">
+              Send
+            </button>
           </div>
-          <div className="text-zinc-500 ml-4 space-y-1">
-            <div>→ Writing src/storage.ts</div>
-            <div>+ Tracing persist-tasks--a7f3d2c1</div>
-            <div>+ Added reasoning: "localStorage for browser persistence"</div>
-          </div>
-        </div>
-
-        <div className="mt-4 ml-4 space-y-1">
-          <div className="text-blue-400">PreHook: 2 comments, 3 specs, 4 agent changes</div>
-          <div className="text-zinc-500">Read(src/components/Component.tsx)</div>
-          <div className="text-zinc-500">Update(...)</div>
-          <div className="text-blue-400">PostHook: saved change</div>
         </div>
       </div>
 
-      <div className="border-t border-zinc-800 p-3 flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <span className="text-zinc-500">→</span>
-          <input
-            type="text"
-            placeholder="Ask Claude..."
-            className="flex-1 bg-transparent text-zinc-400 text-xs outline-none"
-            disabled
-          />
+      {/* Right panel - Richtext Editor */}
+      <div className="w-1/2 flex flex-col overflow-hidden bg-zinc-950">
+        <div className="flex-1 overflow-y-auto py-4 px-8 demo-scrollbar">
+          <div className="group relative mb-4">
+            <div className="absolute -left-6 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-600 cursor-grab text-xs">⋮⋮</div>
+            <h1 className="text-xl font-bold text-zinc-100">{specContent.title}</h1>
+          </div>
+
+          <div className="group relative mb-3">
+            <div className="absolute -left-6 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-600 cursor-grab text-xs">⋮⋮</div>
+            <div className="py-1 px-1 -mx-1 rounded hover:bg-zinc-900/50">
+              <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Abstract</h2>
+              <p className="text-sm text-zinc-300">{specContent.abstract}</p>
+            </div>
+          </div>
+
+          <div className="group relative mb-3">
+            <div className="absolute -left-6 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-600 cursor-grab text-xs">⋮⋮</div>
+            <div className="py-1 px-1 -mx-1 rounded hover:bg-zinc-900/50">
+              <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Problem</h2>
+              <p className="text-sm text-zinc-300">{specContent.problem}</p>
+            </div>
+          </div>
+
+          <div className="group relative mb-4">
+            <div className="absolute -left-6 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-600 cursor-grab text-xs">⋮⋮</div>
+            <div className="py-1 px-1 -mx-1 rounded hover:bg-zinc-900/50">
+              <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Approach</h2>
+              <p className="text-sm text-zinc-300">{specContent.approach}</p>
+            </div>
+          </div>
+
+          <div className="group relative mb-2">
+            <div className="absolute -left-6 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-600 cursor-grab text-xs">⋮⋮</div>
+            <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider py-1">Requirements</h2>
+          </div>
+
+          {specContent.requirements.map((req) => (
+            <div key={req.id} className="group relative mb-1">
+              <div className="absolute -left-6 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-zinc-600 cursor-grab text-xs">⋮⋮</div>
+              <div className="flex items-start gap-2 py-1 px-1 -mx-1 rounded hover:bg-zinc-900/50">
+                <button className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${
+                  req.status === 'implemented' ? 'bg-blue-500 border-blue-500 text-white' : 'border-zinc-600'
+                }`}>
+                  {req.status === 'implemented' && <span className="text-xs">✓</span>}
+                </button>
+                <span className={`text-sm ${req.status === 'implemented' ? 'text-zinc-400' : 'text-zinc-200'}`}>
+                  {req.text}
+                  <span className="text-yellow-600/60 text-xs font-mono ml-2">{req.glasswareId}</span>
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -643,94 +709,321 @@ function SpecCollaborationView() {
   )
 }
 
-function VersionControlView() {
+function WebTracingView() {
+  const [expandedComment, setExpandedComment] = useState(null)
+
+  const specContent = {
+    title: 'Task Management System',
+    requirements: [
+      { id: 'create-task', text: 'Users can create tasks with a title', status: 'implemented', glasswareId: '3b55e97d', active: true },
+      { id: 'persist-tasks', text: 'Tasks must persist across browser sessions', status: 'implemented', glasswareId: 'a7f3d2c1' },
+      { id: 'filter-tasks', text: 'Users can filter tasks by status', status: 'implemented', glasswareId: '8e2c9f4a' }
+    ]
+  }
+
+  const codeLines = [
+    { num: 1, content: '// @trace[create-task--3b55e97d]', isTrace: true },
+    { num: 2, content: 'export function createTask(title: string): Task {' },
+    { num: 3, content: '  if (!title.trim()) {' },
+    { num: 4, content: '    throw new Error("Title required")' },
+    { num: 5, content: '  }' },
+    { num: 6, content: '' },
+    { num: 7, content: '  // @comment[Ben]: Should we add due dates?', isComment: true, author: 'Ben', commentText: 'Should we add due dates?' },
+    { num: 8, content: '  return {' },
+    { num: 9, content: '    id: crypto.randomUUID(),' },
+    { num: 10, content: '    title: title.trim(),' },
+    { num: 11, content: '    completed: false,' },
+    { num: 12, content: '    createdAt: new Date()' },
+    { num: 13, content: '  }' },
+    { num: 14, content: '}' },
+  ]
+
   return (
-    <div className="flex-1 flex md:flex-row flex-col overflow-hidden">
-      {/* Terminal - left side */}
-      <div className="md:w-1/2 w-full md:border-r border-zinc-800 flex flex-col">
-        <div className="p-4 space-y-2 overflow-y-auto flex-1 demo-scrollbar text-xs">
-          <div className="text-zinc-500">→ ~/workspace</div>
-
-          <div className="text-zinc-400 mt-4">
-            &gt; Build a task management system with persistence
+    <div className="flex-1 flex overflow-hidden">
+      {/* Left panel - Richtext Editor with highlighted requirement */}
+      <div className="w-1/2 border-r border-zinc-800 flex flex-col overflow-hidden bg-zinc-950">
+        <div className="flex-1 overflow-y-auto py-4 px-8 demo-scrollbar">
+          <div className="group relative mb-4">
+            <h1 className="text-xl font-bold text-zinc-100">{specContent.title}</h1>
           </div>
 
-          <div className="space-y-2 mt-3">
-            <div className="text-zinc-400 flex items-start gap-2">
-              <span style={{ color: '#C15F3C' }}>✻</span>
-              <div>I'll implement the task system based on your spec.</div>
-            </div>
+          <div className="group relative mb-2">
+            <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider py-1">Requirements</h2>
           </div>
 
-          <div className="mt-3 text-zinc-500 ml-4">✓ Read workspace.md</div>
-
-          <div className="mt-4 text-zinc-400">&gt; build workspace.md</div>
-
-          <div className="mt-3 space-y-2">
-            <div className="text-zinc-400 flex items-start gap-2">
-              <span style={{ color: '#C15F3C' }}>✓</span>
-              <div>Implementing task creation...</div>
+          {specContent.requirements.map((req) => (
+            <div key={req.id} className={`group relative mb-1 ${req.active ? 'bg-orange-500/10 -mx-2 px-2 rounded' : ''}`}>
+              <div className="flex items-start gap-2 py-1.5">
+                <button className="mt-0.5 w-4 h-4 rounded border bg-blue-500 border-blue-500 text-white flex items-center justify-center flex-shrink-0">
+                  <span className="text-xs">✓</span>
+                </button>
+                <span className="text-sm text-zinc-300">
+                  {req.text}
+                  <span className={`text-xs font-mono ml-2 ${req.active ? 'text-orange-400 bg-orange-500/20 px-1 rounded' : 'text-yellow-600/60'}`}>
+                    {req.glasswareId}
+                  </span>
+                </span>
+              </div>
+              {req.active && (
+                <div className="ml-6 mt-1 text-xs text-orange-400">
+                  ↳ Viewing implementation in tasks.ts
+                </div>
+              )}
             </div>
-            <div className="text-zinc-500 ml-4 space-y-1">
-              <div>→ Writing src/tasks.ts</div>
-              <div>→ Writing src/tasks.test.ts</div>
-              <div>+ Tracing create-task--3b55e97d</div>
-            </div>
-          </div>
-
-          <div className="mt-3 space-y-2">
-            <div className="text-zinc-400 flex items-start gap-2">
-              <span style={{ color: '#C15F3C' }}>✓</span>
-              <div>Implementing persistence...</div>
-            </div>
-            <div className="text-zinc-500 ml-4 space-y-1">
-              <div>→ Writing src/storage.ts</div>
-              <div>+ Tracing persist-tasks--a7f3d2c1</div>
-            </div>
-          </div>
-
-          <div className="mt-4 ml-4 space-y-1">
-            <div className="text-blue-400">PreHook: 2 comments, 3 specs, 4 agent changes</div>
-            <div className="text-zinc-500">Read(src/components/Component.tsx)</div>
-            <div className="text-zinc-500">Update(...)</div>
-            <div className="text-blue-400">PostHook: saved change</div>
-          </div>
+          ))}
         </div>
+      </div>
 
-        <div className="border-t border-zinc-800 p-3 flex-shrink-0">
+      {/* Right panel - Code File View */}
+      <div className="w-1/2 flex flex-col overflow-hidden">
+        <div className="px-4 py-2 border-b border-zinc-800 flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
-            <span className="text-zinc-500">→</span>
-            <input
-              type="text"
-              placeholder="Ask Claude..."
-              className="flex-1 bg-transparent text-zinc-400 text-xs outline-none"
-              disabled
-            />
+            <span className="text-zinc-500">◇</span>
+            <span className="text-zinc-300">src/tasks.ts</span>
+          </div>
+          <span className="text-orange-400 text-xs">← linked to 3b55e97d</span>
+        </div>
+        <div className="flex-1 overflow-y-auto demo-scrollbar">
+          {codeLines.map((line) => (
+            <div key={line.num}>
+              <div className={`flex hover:bg-zinc-900/50 ${line.isTrace ? 'bg-orange-500/10' : ''}`}>
+                <div className="py-0.5 pr-2 text-zinc-600 select-none text-right w-8 text-xs">
+                  {line.num}
+                </div>
+                <div className="px-2 py-0.5 flex-1 text-xs font-mono whitespace-pre">
+                  {line.isTrace ? (
+                    <span className="text-orange-400">{line.content}</span>
+                  ) : line.isComment ? (
+                    <button
+                      onClick={() => setExpandedComment(expandedComment === line.num ? null : line.num)}
+                      className="text-blue-400 hover:text-blue-300"
+                    >
+                      <span className="bg-blue-500/20 px-1 rounded">{line.author}</span>
+                      <span className="text-zinc-500 ml-1">💬 1 comment</span>
+                    </button>
+                  ) : (
+                    <span className="text-zinc-300">{line.content}</span>
+                  )}
+                </div>
+              </div>
+              {line.isComment && expandedComment === line.num && (
+                <div className="ml-8 mr-4 my-2">
+                  <div className="bg-zinc-900 border border-zinc-700 rounded-lg p-3">
+                    <div className="flex gap-2 items-start">
+                      <img src={avatars.Ben} className="w-6 h-6 rounded-full object-cover flex-shrink-0" alt="Ben" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs text-zinc-300 font-medium">Ben</div>
+                        <div className="text-xs text-zinc-400 mt-1">{line.commentText}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="px-4 py-1 bg-zinc-800 text-xs text-zinc-400">
+          src/tasks.ts
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function WebVersionControlView() {
+  const [selectedFile, setSelectedFile] = useState('tasks.ts')
+
+  const files = ['tasks.ts', 'tasks.test.ts', 'storage.ts', 'filter.ts']
+
+  const fileCode = {
+    'tasks.ts': [
+      '// @trace[create-task--3b55e97d]',
+      'export function createTask(title: string): Task {',
+      '  if (!title.trim()) {',
+      '    throw new Error("Title required")',
+      '  }',
+      '  return {',
+      '    id: crypto.randomUUID(),',
+      '    title: title.trim(),',
+      '    completed: false',
+      '  }',
+      '}'
+    ]
+  }
+
+  const changelog = [
+    {
+      id: 1,
+      summary: 'Add task creation with title validation',
+      requirements: [
+        { text: 'Users can create tasks with a title', id: '3b55e97d' }
+      ],
+      threads: [
+        { title: 'Implement createTask function', messages: 2 },
+        { title: 'Add input validation', messages: 1 }
+      ],
+      commentsAddressed: [
+        { author: 'Ben', text: 'Add title length validation' }
+      ],
+      files: [
+        { name: 'tasks.ts', additions: 12, deletions: 0 },
+        { name: 'tasks.test.ts', additions: 14, deletions: 0 }
+      ]
+    },
+    {
+      id: 2,
+      summary: 'Add localStorage persistence for tasks',
+      requirements: [
+        { text: 'Tasks must persist across sessions', id: 'a7f3d2c1' }
+      ],
+      threads: [
+        { title: 'Implement TaskStorage class', messages: 2 }
+      ],
+      commentsAddressed: [
+        { author: 'Frances', text: 'Handle localStorage quota errors' }
+      ],
+      files: [
+        { name: 'storage.ts', additions: 15, deletions: 0 }
+      ]
+    },
+    {
+      id: 3,
+      summary: 'Add status filter for active/done tasks',
+      requirements: [
+        { text: 'Users can filter tasks by status', id: '8e2c9f4a' }
+      ],
+      threads: [
+        { title: 'Implement filterTasks function', messages: 2 }
+      ],
+      commentsAddressed: [],
+      files: [
+        { name: 'filter.ts', additions: 13, deletions: 0 }
+      ]
+    }
+  ]
+
+  return (
+    <div className="flex-1 flex overflow-hidden">
+      {/* Left panel - File Sidebar */}
+      <div className="w-36 border-r border-zinc-800 overflow-y-auto text-xs flex-shrink-0 demo-scrollbar">
+        <div className="p-2 space-y-1">
+          <div className="flex items-center gap-1.5 text-zinc-500 py-1">
+            <span className="text-[10px]">▼</span>
+            <span>specs</span>
+          </div>
+          <div className="ml-3">
+            <div className="flex items-center gap-1.5 py-0.5 px-1.5 rounded text-zinc-400 hover:bg-zinc-800 cursor-pointer">
+              <span className="text-zinc-500">◇</span>
+              <span>workspace.md</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 text-zinc-500 py-1 mt-2">
+            <span className="text-[10px]">▼</span>
+            <span>src</span>
+          </div>
+          <div className="ml-3 space-y-0.5">
+            {files.map(file => (
+              <div
+                key={file}
+                onClick={() => setSelectedFile(file)}
+                className={`flex items-center gap-1.5 py-0.5 px-1.5 rounded cursor-pointer ${
+                  selectedFile === file ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:bg-zinc-800'
+                }`}
+              >
+                <span className="text-zinc-500">◇</span>
+                <span>{file}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Changelog - right side (terminal log style) */}
-      <div className="md:w-1/2 w-full overflow-y-auto pt-0 pb-4 px-4 demo-scrollbar md:border-t-0 border-t border-zinc-800 font-mono text-xs">
-        <div className="space-y-1">
-          <div className="text-zinc-500">sarah@macbook ~/workspace</div>
-          <div className="text-zinc-400 mt-2">$ mod sync</div>
-          <div className="text-zinc-500 mt-2">syncing feat/task-system...</div>
-          <div className="text-zinc-600 mt-2 mb-2">─────────────────────────────────</div>
+      {/* Middle panel - Code View */}
+      <div className="w-1/2 border-r border-zinc-800 flex flex-col overflow-hidden">
+        <div className="px-4 py-2 border-b border-zinc-800 text-xs text-zinc-400">
+          src/{selectedFile}
+        </div>
+        <div className="flex-1 overflow-y-auto demo-scrollbar">
+          {(fileCode[selectedFile] || fileCode['tasks.ts']).map((line, i) => (
+            <div key={i} className={`flex hover:bg-zinc-900/50 ${line.startsWith('// @trace') ? 'bg-orange-500/10' : ''}`}>
+              <div className="py-0.5 pr-2 text-zinc-600 select-none text-right w-8 text-xs">
+                {i + 1}
+              </div>
+              <div className="px-2 py-0.5 flex-1 text-xs font-mono whitespace-pre">
+                <span className={line.startsWith('// @trace') ? 'text-orange-400' : 'text-zinc-300'}>{line}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-          <div className="text-zinc-500">[09:38] <span className="text-blue-400">prompt</span> "Build a task management system..." <span className="text-zinc-600">(@sarah)</span></div>
-          <div className="text-zinc-500">[09:39] <span className="text-blue-400">create</span> workspace.md <span className="text-zinc-600">(claude)</span></div>
-          <div className="text-zinc-500">[09:40] <span className="text-blue-400">edit</span> tasks.ts:1-12 <span className="text-zinc-600">(claude)</span></div>
-          <div className="text-zinc-500">[09:41] <span className="text-blue-400">comment</span> "What if localStorage is full?" <span className="text-zinc-600">(@frances)</span></div>
-          <div className="text-zinc-500">[09:42] <span className="text-blue-400">edit</span> storage.ts:1-15 <span className="text-zinc-600">(claude)</span></div>
-          <div className="text-zinc-500">[09:43] <span className="text-blue-400">comment</span> "The filter buttons look great!" <span className="text-zinc-600">(@ben)</span></div>
-          <div className="text-zinc-500">[09:44] <span className="text-blue-400">edit</span> filter.ts:1-13 <span className="text-zinc-600">(claude)</span></div>
-          <div className="text-zinc-500">[09:45] <span className="text-blue-400">review</span> PR approved by @mike <span className="text-zinc-600">(@sarah)</span></div>
+      {/* Right panel - GUI Changelog */}
+      <div className="w-1/2 overflow-y-auto p-3 demo-scrollbar">
+        <div className="text-xs text-zinc-500 uppercase tracking-wider mb-3">Changelog</div>
+        <div className="space-y-3">
+          {changelog.map((entry) => (
+            <div key={entry.id} className="bg-zinc-900 border border-zinc-800 rounded-lg p-3 hover:border-zinc-700 transition-colors">
+              {/* Commit summary + revert */}
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <div className="text-zinc-200 text-sm font-medium">{entry.summary}</div>
+                <button className="text-xs text-zinc-500 hover:text-zinc-300 border border-zinc-700 hover:border-zinc-600 px-2 py-0.5 rounded transition-colors flex-shrink-0">
+                  Revert
+                </button>
+              </div>
 
-          <div className="text-zinc-600 mt-2">─────────────────────────────────</div>
-          <div className="text-zinc-500 mt-1">
-            <span className="text-green-400">✓</span> synced | 3 specs | 4 files changed
-          </div>
+              {/* Requirements addressed */}
+              <div className="mb-2">
+                <div className="text-xs text-zinc-500 mb-1">Requirements</div>
+                {entry.requirements.map((req, i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs ml-2">
+                    <span className="text-green-400">✓</span>
+                    <span className="text-zinc-400">{req.text}</span>
+                    <span className="text-yellow-600 font-mono">{req.id}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Agent threads */}
+              <div className="mb-2">
+                <div className="text-xs text-zinc-500 mb-1">Threads</div>
+                {entry.threads.map((thread, i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs ml-2">
+                    <span className="text-orange-400">◈</span>
+                    <span className="text-zinc-400">{thread.title}</span>
+                    <span className="text-zinc-600">({thread.messages})</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Comments addressed */}
+              {entry.commentsAddressed.length > 0 && (
+                <div className="mb-2">
+                  <div className="text-xs text-zinc-500 mb-1">Comments addressed</div>
+                  {entry.commentsAddressed.map((comment, i) => (
+                    <div key={i} className="flex items-center gap-2 text-xs ml-2">
+                      <span className="text-blue-400">✓</span>
+                      <span className="text-zinc-500">@{comment.author.toLowerCase()}</span>
+                      <span className="text-zinc-400 truncate">{comment.text}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Files */}
+              <div className="pt-2 border-t border-zinc-800">
+                <div className="text-xs text-zinc-500 mb-1">Files</div>
+                {entry.files.map((file, i) => (
+                  <div key={i} className="flex items-center justify-between text-xs ml-2">
+                    <span className="text-zinc-400">{file.name}</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-blue-400">+{file.additions}</span>
+                      {file.deletions > 0 && <span className="text-red-400">-{file.deletions}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
