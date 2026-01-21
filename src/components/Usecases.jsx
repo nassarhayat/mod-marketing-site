@@ -15,11 +15,11 @@ function Usecases() {
   ]
 
   const descriptions = {
-    'spec': 'Collaborate on specs in real-time with your team. Click highlighted text to see comments, expand code traces to see implementations.',
-    'agent-context': 'See exactly why your agent made each decision. Full reasoning from spec to implementation with context preserved.',
-    'tracing': 'Click any code to see its spec. Click any spec to see the code. Bidirectional traceability with glassware IDs.',
-    'version-control': 'Every change tracked automatically. See who did what, when, and why. Revert to any point without losing work.',
-    'review': 'Review with full context: requirements coverage, agent reasoning, team comments, and diffs in one view.'
+    'spec': 'Real-time co-editing of specs. Git only syncs on commit. Mod syncs as you type.',
+    'agent-context': 'Rich metadata on every file. Notes, comments, traces. All shareable across your team.',
+    'tracing': 'Every code change linked to its requirement. Know why changes were made, not just what changed.',
+    'version-control': 'Auto-versioning from agent activity. Full context on every change. Easy rollback.',
+    'review': 'Review locally with full execution context. Comments, traces, and diffs together. No GitHub round-trip.'
   }
 
   return (

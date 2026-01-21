@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import Hero from '../components/Hero'
-import Discover from '../components/Discover'
 import Usecases from '../components/Usecases'
+import Foundation from '../components/Foundation'
+import Discover from '../components/Discover'
 import FinalCTA from '../components/FinalCTA'
 
 function Home() {
@@ -38,8 +39,9 @@ function Home() {
   return (
     <>
       <Hero />
-      <Discover />
       <Usecases />
+      <Foundation />
+      <Discover />
       <FinalCTA />
     </>
   )
