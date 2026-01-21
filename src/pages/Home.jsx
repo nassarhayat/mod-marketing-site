@@ -39,9 +39,9 @@ function Home() {
   return (
     <>
       <Hero />
+      <Discover />
       <Usecases />
       <Foundation />
-      <Discover />
       <FinalCTA />
     </>
   )

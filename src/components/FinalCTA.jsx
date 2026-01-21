@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 function FinalCTA() {
   return (
-    <section className="mb-16 md:mb-24 px-4 md:px-8">
+    <section className="mt-24 md:mt-32 mb-16 md:mb-24 px-4 md:px-8">
       <div className="max-w-[1350px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] xl:grid-cols-[1fr_500px] gap-4">
           {/* Main content - video + text */}
